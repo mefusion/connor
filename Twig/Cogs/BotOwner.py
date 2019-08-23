@@ -18,6 +18,16 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
+    @commands.command(name='restart')
+    @commands.is_owner()
+    async def __restart_bot__(self, ctx):
+        await ctx.send(':gear: Перезагрузка...')
+        log = Log()
+        log.data = f':repeat: **Перезагрузка...**\n\n'
+        log.data += f'Запрошено пользователем {ctx.author.name}#{ctx.author.discriminator} (`{ctx.author.id}`)'
+        await log.send(self.bot)
+        return await self.bot.close()
+
     @commands.command(aliases=['update'])
     async def pull(self, ctx):
         message = await ctx.send(':repeat: Pulling from `origin` `master`...')
