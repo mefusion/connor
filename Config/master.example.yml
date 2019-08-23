@@ -1,7 +1,8 @@
 CONFIG:
   PREFIX: '?'
-  MAINTAINERS: [576322791129743361]
-  LOG_CHANNEL_ID: a channel id, where all the stuff should be logged
-  XP_LOG_CHANNEL_ID: a channel id, where all the xp related logs should be logged
-  STATUS: with XP orbs
-  SHOW_NO_PERMS_MESSAGES: true
+  MAINTAINERS:
+    - 576322791129743361 # change this with your ID
+  LOG_CHANNEL_ID: 169258459177549824 # change those with your channel ID for main logs
+  XP_LOG_CHANNEL_ID: 276430581468889089 # change this a channel ID for XP related logs
+  STATUS: "with XP orbs"
+  SHOW_NO_PERMS_MESSAGES: true # show the message if a user triggers the command but they dont have permissions to run it
