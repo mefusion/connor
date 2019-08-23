@@ -41,4 +41,7 @@ DEFAULT_COLOR = discord.Colour.default()
 WARNING_COLOR = discord.Colour.gold()
 BLURPLE_COLOR = discord.Colour.blurple()
 
+# Время запуска
+BOT_STARTED_AT = int(time.time())
+
 print('[CORE] Core initialized!')
