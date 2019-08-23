@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from Twig.TwigCore import *
 from Twig.Utils.Logger import Log
+from Twig.Utils.Sql.Functions.MainFunctionality import init_sql
 
 # Модули, которые загружаются при запуске клиента бота
 initial_extensions = [
@@ -18,6 +19,8 @@ bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(BOT_PREF
 
 @bot.event
 async def on_ready():
+    # Инициализация БД
+    await init_sql()
     print(f'[CORE] The bot is ready for duty!')
     await Log(log_data=':wave: Я уже работаю!').send(bot, MAIN_LOGS_CHANNEL)
     playing_now = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help',
