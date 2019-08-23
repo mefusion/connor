@@ -177,3 +177,4 @@ fabric.properties
 
 # Customs
 Config/master.yml
+Config/token.env
