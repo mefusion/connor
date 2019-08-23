@@ -1,6 +1,8 @@
 import discord
+import random
+import datetime
 from discord.ext import commands
-from Twig.TwigCore import *
+from Twig.TwigCore import BOT_PREFIX, IGNORED_CHANNELS, DEFAULT_COLOR, XP_LOGS_CHANNEL
 from Twig.Utils.Sql.Functions.MainFunctionality import *
 
 
@@ -72,6 +74,7 @@ class EventsLevels(commands.Cog, name='Уровни'):
 
         new_xp = await fetch_data('xp', 'user', member.id)
         temp_embed.add_field(name='Обновлённый баланс', value=new_xp)
+        temp_embed.timestamp = datetime.datetime.utcnow()
 
         log_chan = self.bot.get_channel(XP_LOGS_CHANNEL)
         return await log_chan.send(embed=temp_embed)
