@@ -33,7 +33,7 @@ async def add_user(user):
 
 
 # Удаляет пользователя из таблицы
-async def del_user_form_data(user):
+async def del_user(user):
     con = await connect_sqlite(DEFAULT_DB_FILENAME)
 
     cur = await con.execute("DELETE FROM data WHERE user=%s" % user)
@@ -68,6 +68,17 @@ async def fetch_data(fetch_this, where_is, where_val):
         return data[0]
 
 
+# Обновление каких-либо параметров в БД
+async def update_data(update_this, update_to, where_is, where_val):
+    con = await connect_sqlite(DEFAULT_DB_FILENAME)
+    cur = await con.execute(f"UPDATE data SET %s=%s WHERE %s=%s" % (update_this, update_to, where_is, where_val))
+    await con.commit()
+
+    await cur.close()
+    await con.close()
+    del con, cur
+
+
 # Получит 5 пользователей, по возрастанию по очкам опыта
 # Возвращает список вида ['user.id $$$ xp-balance']...
 async def fetch_top5():
@@ -90,12 +101,22 @@ async def fetch_top5():
     return data
 
 
-# Обновление каких-либо параметров в БД
-async def update_data(update_this, update_to, where_is, where_val):
+# Получит всех пользователей, по возрастанию по очкам опыта
+# Возвращает список вида ['user.id $$$ xp-balance']...
+async def fetch_table():
     con = await connect_sqlite(DEFAULT_DB_FILENAME)
-    cur = await con.execute(f"UPDATE data SET %s=%s WHERE %s=%s" % (update_this, update_to, where_is, where_val))
-    await con.commit()
+
+    cur = await con.execute("SELECT user FROM data LIMIT 1001")
+    data = await cur.fetchall()
+
+    new_data = []
+
+    for elem in data:
+        new_data.append(elem[0])
+
+    data = new_data
 
     await cur.close()
     await con.close()
-    del con, cur
+    del new_data, con, cur
+    return data

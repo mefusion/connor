@@ -18,6 +18,17 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
+    @commands.command(aliases=['update'])
+    async def pull(self, ctx):
+        message = await ctx.send(':repeat: Pulling from `origin` `master`...')
+        repo = git.Repo('.git')
+        assert not repo.bare
+        repository = repo.remotes.origin
+        repository.fetch()
+        repository.pull()
+        await message.edit(content='**✓** `origin` fetched & pulled successfully!')
+        del repo, message, repository
+
     @commands.command(pass_context=True, hidden=True, name='eval')
     @commands.is_owner()
     async def _eval(self, ctx, *, body: str):
@@ -133,17 +144,6 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             await ctx.send(f'**`ОШИБКА:`** {type(e).__name__} - {e}')
         else:
             await ctx.send(f'**`УСПЕХ`** -  Модуль `{cog}` успешно перезагружен!')
-
-    @commands.command(aliases=['update'])
-    async def pull(self, ctx):
-        message = await ctx.send(':repeat: Pulling from `origin` `master`...')
-        repo = git.Repo('.git')
-        assert not repo.bare
-        repository = repo.remotes.origin
-        repository.fetch()
-        repository.pull()
-        await message.edit(content='**✓** `origin` fetched & pulled successfully!')
-        del repo, message, repository
 
 
 def setup(bot):
