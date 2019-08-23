@@ -1,0 +1,7 @@
+CONFIG:
+  PREFIX: '?'
+  MAINTAINERS: [576322791129743361]
+  LOG_CHANNEL_ID: a channel id, where all the stuff should be logged
+  XP_LOG_CHANNEL_ID: a channel id, where all the xp related logs should be logged
+  STATUS: with XP orbs
+  SHOW_NO_PERMS_MESSAGES: true

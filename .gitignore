@@ -176,3 +176,4 @@ fabric.properties
 .idea/
 
 # Customs
+Config/master.yml
