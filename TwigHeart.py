@@ -5,6 +5,7 @@ from Twig.Utils.Logger import Log
 
 # Модули, которые загружаются при запуске клиента бота
 initial_extensions = [
+    'Twig.Cogs.Events',
     'Twig.Cogs.Admin',
     'Twig.Cogs.BotOwner',
     'Twig.Cogs.Levels',
@@ -16,7 +17,11 @@ bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(BOT_PREF
 
 if __name__ == '__main__':
     for extension in initial_extensions:
-        bot.load_extension(extension)
+        try:
+            bot.load_extension(extension)
+        except Exception as e:
+            print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
+            traceback.print_exc()
 
 
 @bot.event
