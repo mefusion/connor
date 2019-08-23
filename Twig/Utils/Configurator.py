@@ -19,3 +19,17 @@ try:
     XP_LOGS_CHANNEL = cfg['XP_LOG_CHANNEL_ID']
 except Exception as err:
     print(err)
+
+
+# Попытка получения белого списка
+try:
+    # Подключение файла конфигурации
+    __temp__ = open('./Config/master.yml', 'r', encoding='utf-8')
+    # Загрузка данных из файла конфигурации
+    whitelist = yaml.safe_load(__temp__)
+    whitelist = whitelist['whitelist'.upper()]
+    # Удаление временных данных
+    __temp__.close()
+    del __temp__
+except Exception as err:
+    print(err)
