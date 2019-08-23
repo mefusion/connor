@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv, dotenv_values
 from discord.ext.commands import BucketType
+from contextlib import redirect_stdout
 from Twig.Utils.AppLogging import *
 import json
 import time

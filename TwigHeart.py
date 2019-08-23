@@ -15,14 +15,6 @@ initial_extensions = [
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(BOT_PREFIX))
 
-if __name__ == '__main__':
-    for extension in initial_extensions:
-        try:
-            bot.load_extension(extension)
-        except Exception as e:
-            print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
-            traceback.print_exc()
-
 
 @bot.event
 async def on_ready():
@@ -45,6 +37,26 @@ async def on_disconnect():
 async def on_resumed():
     await Log(log_data=':repeat: Соединение восстановлено.').send(bot, MAIN_LOGS_CHANNEL)
     return print(f'[CORE] Connection resumed.')
+
+
+@bot.command(name='restart')
+@commands.is_owner()
+async def __restart_bot__(ctx):
+    await ctx.send(':gear: Перезагрузка...')
+    log = Log()
+    log.data = f':repeat: **Перезагрузка...**\n\n'
+    log.data += f'Запрошено пользователем {ctx.author.name}#{ctx.author.discriminator} (`{ctx.author.id}`)'
+    await log.send(bot)
+    return await bot.close()
+
+
+if __name__ == '__main__':
+    for extension in initial_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception as e:
+            print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
+            traceback.print_exc()
 
 
 bot.run(BOT_TOKEN, bot=True, reconnect=True)
