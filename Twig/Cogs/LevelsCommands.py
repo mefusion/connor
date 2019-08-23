@@ -1,12 +1,32 @@
 from Twig.TwigCore import *
 import discord
 from discord.ext import commands
-from Twig.Utils.Sql.Functions.MainFunctionality import fetch_data
+from Twig.Utils.Sql.Functions.MainFunctionality import fetch_data, fetch_top5
 
 
 class LevelsCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(name='leaders', aliases=['lb', 'leaderboard'], brief='Топ пользователей по количеству опыта на счету')
+    @commands.cooldown(1, 20, type=BucketType.user)
+    async def _leaders(self, ctx):
+        data = await fetch_top5()
+        data_len = len(data)
+
+        embed = discord.Embed(colour=SECONDARY_COLOR, title=f'ТОП-{data_len} ЛИДЕРОВ')
+
+        for i in range(data_len):
+            temp = data[i].split(' $$$ ')
+            balance = temp[1]
+            pos = i+1
+            user = await self.bot.fetch_user(temp[0])
+            embed.add_field(name=f'#{pos} | {user}', value=f'С балансом **{balance} опыта**!', inline=False)
+
+            if i == 0:
+                embed.set_thumbnail(url=user.avatar_url)
+
+        return await ctx.send(embed=embed)
 
     @commands.command(name='xp', aliases=['balance', 'bal'], brief='Узнать баланс опыта')
     @commands.cooldown(1, 10, type=BucketType.user)
@@ -14,7 +34,7 @@ class LevelsCommands(commands.Cog):
         temp_embed = discord.Embed()
 
         if user is self.bot.user:
-            return await ctx.send(f"Оу. Но создатель решил, что я не могу иметь уровень! Просите. Бип. Буп.")
+            return await ctx.send(f"У меня миллиарды квинтиллионов очков опыта, вы уже програли это сражение.")
 
         if user is None:
             user = ctx.author

@@ -34,7 +34,7 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return await ctx.send('Что это вообще за команда? Я такую не знаю :(')
 
-        if isinstance(error, commands.DisabledCommand):
+        elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'Команда `{ctx.command}` отключена.')
 
         elif isinstance(error, commands.MissingPermissions):
@@ -135,6 +135,7 @@ class ErrorHandler(commands.Cog):
         log_embed.add_field(name='Автор сообщения', value=f'{ctx.author} (`{ctx.author.id}`)')
         await log.send(embed=log_embed)
         log_embed.clear_fields()
+        await ctx.send(':x: Произошла непредвиденная ошибка, разработчик уже знает о ней.')
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 

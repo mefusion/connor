@@ -134,6 +134,17 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         else:
             await ctx.send(f'**`УСПЕХ`** -  Модуль `{cog}` успешно перезагружен!')
 
+    @commands.command(aliases=['update'])
+    async def pull(self, ctx):
+        message = await ctx.send(':repeat: Pulling from `origin` `master`...')
+        repo = git.Repo('.git')
+        assert not repo.bare
+        repository = repo.remotes.origin
+        repository.fetch()
+        repository.pull()
+        await message.edit(content='**✓** `origin` fetched & pulled successfully!')
+        del repo, message, repository
+
 
 def setup(bot):
     bot.add_cog(BotOwner(bot))
