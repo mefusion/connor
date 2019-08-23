@@ -46,3 +46,16 @@ try:
     del __temp__
 except Exception as err:
     print(err)
+
+# Попытка получения списка модулей, включаемых при запуске бота
+try:
+    # Подключение файла конфигурации
+    __temp__ = open('./Config/master.yml', 'r', encoding='utf-8')
+    # Загрузка данных из файла конфигурации
+    INITIAL_COGS = yaml.safe_load(__temp__)
+    INITIAL_COGS = INITIAL_COGS['INITIAL_COGS'.upper()]
+    # Удаление временных данных
+    __temp__.close()
+    del __temp__
+except Exception as err:
+    print(err)

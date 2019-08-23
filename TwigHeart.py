@@ -4,15 +4,6 @@ from Twig.TwigCore import *
 from Twig.Utils.Logger import Log
 from Twig.Utils.Sql.Functions.MainFunctionality import init_sql
 
-# Модули, которые загружаются при запуске клиента бота
-initial_extensions = [
-    'Twig.Cogs.Events',
-    'Twig.Cogs.Admin',
-    'Twig.Cogs.BotOwner',
-    'Twig.Cogs.Levels',
-    'Twig.Cogs.TwigExclusives',
-    'Twig.Cogs.Utils',
-]
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(BOT_PREFIX))
 
@@ -54,7 +45,7 @@ async def __restart_bot__(ctx):
 
 
 if __name__ == '__main__':
-    for extension in initial_extensions:
+    for extension in INITIAL_COGS:
         try:
             bot.load_extension(extension)
         except Exception as e:

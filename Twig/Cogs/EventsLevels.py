@@ -4,7 +4,7 @@ from Twig.TwigCore import *
 from Twig.Utils.Sql.Functions.MainFunctionality import *
 
 
-class Levels(commands.Cog, name='Уровни'):
+class EventsLevels(commands.Cog, name='Уровни'):
     def __init__(self, bot):
         self.bot = bot
 
@@ -78,4 +78,4 @@ class Levels(commands.Cog, name='Уровни'):
 
 
 def setup(bot):
-    bot.add_cog(Levels(bot))
+    bot.add_cog(EventsLevels(bot))
