@@ -86,41 +86,6 @@ class ErrorHandler(commands.Cog):
                     description='Я не знаю такого пользователя.'
                 ))
 
-        elif isinstance(error, discord.errors.NotFound):
-            if ctx.command.qualified_name == 'voicedemo':
-                return await ctx.send(embed=
-                discord.Embed(
-                    title=':x: Ошибка!',
-                    description='Канал не найден.',
-                    colour=ERROR_COLOR
-                )
-                )
-
-        # Ошибки для конкретных команд по кодам ошибки (404, 403 и т.п.)
-        elif isinstance(error, discord.errors.HTTPException):
-            if ctx.command.qualified_name == 'voicedemo':
-                if error.code == 50035:
-                    return await ctx.send(embed=
-                    discord.Embed(
-                        title=':x: Ошибка!',
-                        description='Канал не найден.',
-                        colour=ERROR_COLOR
-                    ).add_field(
-                        name='Дополнительно',
-                        value='ID канала не может быть больше значения **%s**' % re.findall(r'\d+', error.text)[0]
-                    )
-                    )
-
-            elif ctx.command.qualified_name == 'role_color':
-                if error.code == 50013:
-                    return await ctx.send(embed=
-                    discord.Embed(
-                        title=':x: Ошибка!',
-                        description='Недостаточно прав.',
-                        colour=ERROR_COLOR
-                    )
-                    )
-
         # ==== COOLDOWN CHECKS ====
 
         elif isinstance(error, commands.CommandOnCooldown):

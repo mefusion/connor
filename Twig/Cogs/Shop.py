@@ -10,7 +10,7 @@ class Shop(commands.Cog, name='Магазин'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(name='shop', brief='Магазинчик всякого')
+    @commands.group(name='shop')
     @commands.guild_only()
     async def _shop(self, ctx):
         if ctx.invoked_subcommand is None:

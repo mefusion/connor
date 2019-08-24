@@ -44,4 +44,17 @@ BLURPLE_COLOR = discord.Colour.blurple()
 # Время запуска
 BOT_STARTED_AT = int(time.time())
 
+# Загрузка описаний команд
+try:
+    # Подключение файла конфигурации
+    __temp__ = open('./Config/commands-information.yml', 'r', encoding='utf-8')
+    # Загрузка данных из файла конфигурации
+    CMD_INFO = yaml.safe_load(__temp__)
+    CMD_INFO = CMD_INFO['COMMANDS']
+    # Удаление временных данных
+    __temp__.close()
+    del __temp__
+except Exception as err:
+    print(err)
+
 print('[CORE] Core initialized!')

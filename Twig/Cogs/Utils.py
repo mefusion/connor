@@ -1,13 +1,46 @@
 import discord
 from discord.ext import commands
 from Twig.TwigCore import *
+from Twig.Utils.Hugging import sendLove
 
 
 class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='userinfo', aliases=['info'])
+    @commands.command(name='hug', brief=CMD_INFO['HUG'])
+    @commands.cooldown(1, 10, BucketType.member)
+    async def _hug(self, ctx, target: discord.User = None):
+        sender = str(ctx.author)
+        msg = sendLove(target.mention, sender)
+        return await ctx.send(msg)
+
+    @commands.command(name='botinfo', aliases=['about'], brief=CMD_INFO['BOTINFO'])
+    @commands.cooldown(1, 15, BucketType.user)
+    async def _botinfo(self, ctx):
+        uptime = int(time.time() - BOT_STARTED_AT)
+        uptime = time.strftime("%H h. %M m. %S s.", time.gmtime(uptime))
+        uptime = uptime.replace("h.", "ч.").replace("m.", "мин.").replace("s.", "сек.")
+        memberOfGuilds = str(len(self.bot.guilds))
+        repo = git.Repo(".git")
+        sha = repo.head.object.hexsha
+        short_sha = repo.git.rev_parse(sha, short=7)
+
+        embed = discord.Embed(
+            title=f'{self.bot.user.name}',
+            description='Привет! Я бот, меня зовут Твиг.\n\n',
+            colour=SECONDARY_COLOR
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.description += f'Я использую `Python {sys.version[:5]}` и библиотеку `discord.py v{discord.__version__}`.\n'
+        embed.description += f'А ещё я работаю на {memberOfGuilds} серверах!'
+        embed.add_field(name='Версия', value=f'`{short_sha}`')
+        embed.add_field(name='Аптайм', value=f'`{uptime}`')
+        embed.add_field(name='GitHub', value=f'[Перейти по ссылке](https://github.com/runic-tears/twig)')
+
+        return await ctx.send(embed=embed)
+
+    @commands.command(name='userinfo', aliases=['info'], brief=CMD_INFO['USERINFO'])
     @commands.cooldown(1, 10, type=BucketType.user)
     async def _userinfo(self, ctx, user: discord.User = None):
         if user is None:
