@@ -18,6 +18,12 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
+    @commands.command(name='repeat', aliases=['mimic', 'copy'], hidden=True)
+    @commands.is_owner()
+    @commands.guild_only()
+    async def do_repeat(self, ctx, *, inp: str):
+        return await ctx.send(inp)
+
     @commands.command(name='restart')
     @commands.is_owner()
     async def __restart_bot__(self, ctx):
@@ -29,6 +35,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         return await self.bot.close()
 
     @commands.command(aliases=['update'])
+    @commands.is_owner()
     async def pull(self, ctx):
         message = await ctx.send(':repeat: Pulling from `origin` `master`...')
         repo = git.Repo('.git')
