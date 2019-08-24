@@ -2,7 +2,7 @@ import discord
 import random
 import datetime
 from discord.ext import commands
-from Twig.TwigCore import BOT_PREFIX, IGNORED_CHANNELS, DEFAULT_COLOR, XP_LOGS_CHANNEL
+from Twig.TwigCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
 from Twig.Utils.Sql.Functions.MainFunctionality import *
 
 
@@ -27,8 +27,7 @@ class EventsLevels(commands.Cog, name='Уровни'):
             return
 
         # Подготавливаем эмбед сообщение
-        temp_embed = discord.Embed()
-        temp_embed.colour = DEFAULT_COLOR
+        temp_embed = discord.Embed(colour=SECONDARY_COLOR)
 
         # Проверяем, если пользователь лишён возможность иметь опыт
         role = discord.utils.get(message.guild.roles, name="noXP")
