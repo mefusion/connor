@@ -18,7 +18,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
-    @commands.command(name='repeat', aliases=['mimic', 'copy'], hidden=True)
+    @commands.command(name='repeat', aliases=('mimic', 'copy'), hidden=True)
     @commands.is_owner()
     @commands.guild_only()
     async def do_repeat(self, ctx, *, inp: str):
@@ -34,7 +34,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         await log.send(self.bot)
         return await self.bot.close()
 
-    @commands.command(name="pullv2")
+    @commands.command(name="pullv2", aliases=("update", "pull"))
     @commands.is_owner()
     async def pullv2(self, ctx):
         pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
