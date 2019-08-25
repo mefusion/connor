@@ -12,6 +12,31 @@ class Admin(commands.Cog, name='Админские'):
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author) or ctx.author.id in BOT_MAINTAINERS
 
+    # ==== ROLES MANAGEMENT COMMANDS ==== #
+
+    @commands.group(name="erole")
+    async def _erole(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await ctx.send('Вы не указали субкоманду.')
+
+    @_erole.command(name="color", aliases=("colour",))
+    async def _erole_color(self, ctx, r: discord.Role = None, c: discord.Colour = None):
+        if r is None:
+            return await ctx.send(":x: Вы не указали роль.")
+        elif c is None:
+            return await ctx.send(embed=discord.Embed(colour=r.colour, description=f"{r.mention}\n↳ Текущий цвет: `{str(r.colour)}`"))
+        else:
+            await r.edit(colour=c)
+
+            r_color_embed = discord.Embed(
+                colour=c, description=f"Вы успешно изменили цвет для роли **{r}**!",
+                reason=f"Изменено пользователем {ctx.author.id}")
+            r_color_embed.set_footer(
+                text=f"{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})",
+                icon_url=ctx.author.avatar_url)
+
+            await ctx.send(embed=r_color_embed)
+
     # ==== XP MANAGEMENT COMMANDS ==== #
 
     @commands.group(name='managexp', aliases=('mxp', 'axp'))
@@ -171,7 +196,8 @@ class Admin(commands.Cog, name='Админские'):
 
         # Рофлан-провека
         if int(current_xp) <= 1:
-            return await message.edit(content=f':thinking: Вы и правда хотите сбросить баланс человеку, у которого на счету нет очков опыта? ')
+            return await message.edit(
+                content=f':thinking: Вы и правда хотите сбросить баланс человеку, у которого на счету нет очков опыта? ')
 
         # Превращаем значение аргумента в целочисленное значение
         set_xp_to = 0
@@ -190,7 +216,8 @@ class Admin(commands.Cog, name='Админские'):
         return await message.edit(
             content=f':ok_hand: Вы успешно сбросили баланс пользователю {str(user)} (`{user.id}`)')
 
-    # ==== XP MANAGEMENT COMMANDS (OWNER ONLY) ==== #
+    # ==== XP MANAGEMENT COMMANDS (BOT OWNER ONLY) ==== #
+
     @_managexp.command(name='add_user', aliases=('force_add_user',))
     @commands.is_owner()
     async def _managexp_add_user(self, ctx, user: discord.User = None):

@@ -8,6 +8,19 @@ class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(name="ping", brief=CMD_INFO['PING'])
+    @commands.cooldown(1, 15, BucketType.user)
+    async def _ping(self, ctx):
+        t1 = time.perf_counter()
+        message = await ctx.send(":ping_pong:")
+        t2 = time.perf_counter()
+        rest = round((t2 - t1) * 1000)
+        latency = round(self.bot.latency * 1000)
+
+        return await message.edit(content='', embed=discord.Embed(
+            colour=discord.Colour.blue(),
+            description=f":heartbeat: HEARTBEAT: **{latency}мс** \n:incoming_envelope: REST: **{rest}мс**"))
+
     @commands.command(name='hug', brief=CMD_INFO['HUG'])
     @commands.cooldown(1, 10, BucketType.member)
     async def _hug(self, ctx, target: discord.User = None):

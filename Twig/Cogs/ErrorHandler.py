@@ -57,12 +57,9 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(embed=discord.Embed(
-                title=':warning: Операция прервана!',
-                description='Вы пропустили какой-то важный параметр для команды!',
-                colour=WARNING_COLOR
-            ).set_footer(
-                text='Узнать подробнее о команде: %shelp %s' % (BOT_PREFIX, ctx.command)
-            ))
+                title=':warning: Операция прервана!', description='Вы пропустили какой-то важный параметр для команды!',
+                colour=WARNING_COLOR).set_footer(
+                text='Узнать подробнее о команде: %shelp %s' % (BOT_PREFIX, ctx.command)))
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
@@ -77,14 +74,17 @@ class ErrorHandler(commands.Cog):
             except:
                 pass
 
+        elif isinstance(error, discord.Forbidden):
+            return await ctx.send(":x: Мне недостаточно прав, чтобы выполнить это действие.")
+
         # Обрвботчики для конкретных случаев
         elif isinstance(error, commands.BadArgument):
             if ctx.command.qualified_name == 'xp':
                 return await ctx.send(embed=discord.Embed(
-                    title=':x: Произошла ошибка!',
-                    colour=ERROR_COLOR,
-                    description='Я не знаю такого пользователя.'
-                ))
+                    title=':x: Произошла ошибка!', colour=ERROR_COLOR, description='Я не знаю такого пользователя.'))
+
+            elif ctx.command.qualified_name == 'erole color':
+                return await ctx.send(embed=discord.Embed(colour=ERROR_COLOR, description=':x: Роль не найдена.'))
 
         # ==== COOLDOWN CHECKS ====
 
