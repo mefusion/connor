@@ -24,6 +24,7 @@ import re
 import textwrap
 import traceback
 import random
+import subprocess
 import psutil
 print('[CORE] Imports are ready...')
 

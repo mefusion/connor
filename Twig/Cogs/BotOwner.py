@@ -34,17 +34,30 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         await log.send(self.bot)
         return await self.bot.close()
 
-    @commands.command(aliases=['update'])
+    @commands.command(name="pullv2")
     @commands.is_owner()
-    async def pull(self, ctx):
-        message = await ctx.send(':repeat: Pulling from `origin` `master`...')
-        repo = git.Repo('.git')
-        assert not repo.bare
-        repository = repo.remotes.origin
-        repository.fetch()
-        repository.pull()
-        await message.edit(content='**✓** `origin` fetched & pulled successfully!')
-        del repo, message, repository
+    async def pullv2(self, ctx):
+        pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
+        stdout, stderr = pull.communicate()
+
+        if stderr is None:
+            return await ctx.send('```yaml\n' + f'{stdout.decode("utf-8")}' + '\n```')
+        else:
+            return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
+
+    # @commands.command(aliases=['update'])
+    # @commands.is_owner()
+    # async def pull(self, ctx):
+    #     message = await ctx.send(':repeat: Pulling from `origin` `master`...')
+    #     repo = git.Repo('.git')
+    #     assert not repo.bare
+    #     repository = repo.remotes.origin
+    #     repository.fetch()
+    #     repository.pull()
+    #     await message.edit(content='**✓** `origin` fetched & pulled successfully!')
+    #     del repo, message, repository
 
     @commands.command(pass_context=True, hidden=True, name='eval')
     @commands.is_owner()
