@@ -15,7 +15,7 @@ class Utils(commands.Cog, name='Разное'):
         msg = sendLove(target.mention, sender)
         return await ctx.send(msg)
 
-    @commands.command(name='botinfo', aliases=['about'], brief=CMD_INFO['BOTINFO'])
+    @commands.command(name='botinfo', aliases=('about',), brief=CMD_INFO['BOTINFO'])
     @commands.cooldown(1, 15, BucketType.user)
     async def _botinfo(self, ctx):
         uptime = int(time.time() - BOT_STARTED_AT)
@@ -40,7 +40,7 @@ class Utils(commands.Cog, name='Разное'):
 
         return await ctx.send(embed=embed)
 
-    @commands.command(name='userinfo', aliases=['info'], brief=CMD_INFO['USERINFO'])
+    @commands.command(name='userinfo', aliases=('info',), brief=CMD_INFO['USERINFO'])
     @commands.cooldown(1, 10, type=BucketType.user)
     async def _userinfo(self, ctx, user: discord.User = None):
         if user is None:

@@ -14,7 +14,7 @@ class Admin(commands.Cog, name='Админские'):
 
     # ==== XP MANAGEMENT COMMANDS ==== #
 
-    @commands.group(name='managexp', aliases=['mxp', 'axp'])
+    @commands.group(name='managexp', aliases=('mxp', 'axp'))
     async def _managexp(self, ctx):
         if ctx.invoked_subcommand is None:
             return await ctx.send('Вы не указали субкоманду.')
@@ -57,7 +57,7 @@ class Admin(commands.Cog, name='Админские'):
         await asyncio.sleep(0.01)
         return await message.edit(content=resulting_txt)
 
-    @_managexp.command(name='add', aliases=['give'])
+    @_managexp.command(name='add', aliases=('give',))
     async def _managexp_add(self, ctx, user: discord.User, adding_to_xp):
         message = await ctx.send(':repeat: Выполняю...')
 
@@ -191,7 +191,7 @@ class Admin(commands.Cog, name='Админские'):
             content=f':ok_hand: Вы успешно сбросили баланс пользователю {str(user)} (`{user.id}`)')
 
     # ==== XP MANAGEMENT COMMANDS (OWNER ONLY) ==== #
-    @_managexp.command(name='add_user', aliases=['force_add_user'])
+    @_managexp.command(name='add_user', aliases=('force_add_user',))
     @commands.is_owner()
     async def _managexp_add_user(self, ctx, user: discord.User = None):
         message = await ctx.send(':repeat: Выполняю...')

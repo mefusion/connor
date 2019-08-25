@@ -8,7 +8,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='leaders', aliases=['lb', 'leaderboard'], brief='Топ пользователей по количеству опыта на счету')
+    @commands.command(name='leaders', aliases=('lb', 'leaderboard'), brief='Топ пользователей по количеству опыта на счету')
     @commands.cooldown(1, 20, type=BucketType.user)
     async def _leaders(self, ctx):
         data = await fetch_top5()
@@ -28,7 +28,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
 
         return await ctx.send(embed=embed)
 
-    @commands.command(name='xp', aliases=['balance', 'bal'], brief='Узнать баланс опыта')
+    @commands.command(name='xp', aliases=('balance', 'bal'), brief='Узнать баланс опыта')
     @commands.cooldown(1, 10, type=BucketType.user)
     async def _xp(self, ctx, user: discord.User = None):
         temp_embed = discord.Embed()

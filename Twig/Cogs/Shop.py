@@ -52,13 +52,13 @@ class Shop(commands.Cog, name='Магазин'):
 
     @_shop.command(name="things")
     @commands.guild_only()
-    # @commands.cooldown(1, 15, BucketType.user)
+    @commands.cooldown(1, 15, BucketType.user)
     async def _shop_things(self, ctx):
         return await ctx.send('На данный момент в этом отделе пусто.')
 
     @_shop.group(name="buy")
     @commands.guild_only()
-    # @commands.cooldown(1, 25, BucketType.user)
+    @commands.cooldown(1, 25, BucketType.user)
     async def _shop_buy(self, ctx):
         if ctx.invoked_subcommand is None:
             return await ctx.send(
@@ -66,7 +66,7 @@ class Shop(commands.Cog, name='Магазин'):
 
     @_shop_buy.command(name="roles")
     @commands.guild_only()
-    # @commands.cooldown(1, 25, BucketType.user)
+    @commands.cooldown(1, 25, BucketType.user)
     async def _shop_buy_roles(self, ctx, itemId=None):
         # Проверяем, если пользователь не указал код товара
         if itemId is None:
