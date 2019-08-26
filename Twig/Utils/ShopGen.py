@@ -4,7 +4,7 @@ import yaml
 def get_roles_shop_list(guild_id):
     try:
         # Подключение файла конфигурации
-        __temp__ = open(f'./Config/Shops/{guild_id}.yml', 'r', encoding='utf-8')
+        __temp__ = open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8')
     except FileNotFoundError:
         # Возвращаем None, если проблема с обнаружением файла
         return None

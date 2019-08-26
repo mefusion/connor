@@ -22,6 +22,7 @@ INITIAL_COGS: # Модули, загружаемые при запуске бо�
   - 'Twig.Cogs.LevelsCommands'
   - 'Twig.Cogs.HelpCustomization'
   - 'Twig.Cogs.Shop'
+  - 'Twig.Cogs.Welcomer'
 
 IGNORED_CHANNELS: # Названия каналов, которые будут игнорироваться при получении опыта
   - 'commands'

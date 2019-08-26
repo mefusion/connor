@@ -26,6 +26,7 @@ import traceback
 import random
 import subprocess
 import psutil
+import yaml
 print('[CORE] Imports are ready...')
 
 # Получение токена
