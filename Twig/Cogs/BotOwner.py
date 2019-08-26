@@ -18,6 +18,17 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
 
+    @commands.command(name="mem")
+    async def _mem(self, ctx):
+        memInfo = psutil.Process(os.getpid()).memory_info()
+
+        embed = discord.Embed(colour=SECONDARY_COLOR, title=":rosette: Memory Usage")
+        embed.add_field(name="Resident Set Size", value=f"{round(memInfo.rss / 1e+6, 1)} МБ")
+        embed.add_field(name="Virtual Memory Size", value=f"{round(memInfo.vms / 1e+6, 1)} МБ")
+
+        del memInfo
+        return await ctx.send(embed=embed)
+
     @commands.command(name='repeat', aliases=('mimic', 'copy'), hidden=True)
     @commands.is_owner()
     @commands.guild_only()
@@ -38,8 +49,8 @@ class BotOwner(commands.Cog, name='Владелец бота'):
     @commands.is_owner()
     async def pullv2(self, ctx):
         pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT)
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
         stdout, stderr = pull.communicate()
 
         if stderr is None:
