@@ -3,3 +3,6 @@ COMMANDS:
   BOTINFO: Информация о боте (мне :>)
   HUG: Обнять кого-нибудь :)
   PING: Pong!
+  STATUS: Манипуляция со статусом бота
+  STATUS_RESET: Сбросить статус
+  STATUS_SET: Задать статус

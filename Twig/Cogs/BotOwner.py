@@ -58,18 +58,6 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         else:
             return await ctx.send('```yaml\n' + f'{stderr.decode("utf-8")}' + '\n```')
 
-    # @commands.command(aliases=['update'])
-    # @commands.is_owner()
-    # async def pull(self, ctx):
-    #     message = await ctx.send(':repeat: Pulling from `origin` `master`...')
-    #     repo = git.Repo('.git')
-    #     assert not repo.bare
-    #     repository = repo.remotes.origin
-    #     repository.fetch()
-    #     repository.pull()
-    #     await message.edit(content='**✓** `origin` fetched & pulled successfully!')
-    #     del repo, message, repository
-
     @commands.command(pass_context=True, hidden=True, name='eval')
     @commands.is_owner()
     async def _eval(self, ctx, *, body: str):
@@ -115,6 +103,45 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             else:
                 self._last_result = ret
                 await ctx.send(f'```py\n{value}{ret}\n```')
+
+    # ==== STATuS COMMANDS ==== #
+
+    @commands.group(name="status", brief=CMD_INFO['STATUS'])
+    async def _status(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await ctx.send('Вы не указали субкоманду.')
+
+    @_status.command(name="reset", brief=CMD_INFO['STATUS_RESET'])
+    async def _status_reset(self, ctx):
+        stat = discord.Activity(name="Сбрасывание статуса...", type=discord.ActivityType.playing)
+        await self.bot.change_presence(activity=stat)
+        await asyncio.sleep(0.5)
+        stat = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help', type=discord.ActivityType.playing)
+        await self.bot.change_presence(activity=stat)
+
+        del stat
+        return await ctx.send(":ok_hand: Статус успешно сброшен.")
+
+    @_status.command(name="set", brief=CMD_INFO['STATUS_SET'])
+    async def _status_set(self, ctx, stype, *, text):
+        if (stype == 'playing') or (stype == '1'):
+            stype = discord.ActivityType.playing
+        elif (stype == 'watching') or (stype == '2'):
+            stype = discord.ActivityType.watching
+        elif (stype == 'listening') or (stype == '3'):
+            stype = discord.ActivityType.listening
+            # Немного сломано, нужно понять в чём проблема.
+        elif (stype == 'streaming') or (stype == '4'):
+            stype = discord.ActivityType.streaming
+            # Если в качестве типа статуса было указано что-то странное
+        else:
+            stype = discord.ActivityType.playing
+
+        playing_now = discord.Activity(name=str(text), type=stype)
+        await self.bot.change_presence(activity=playing_now)
+
+        del playing_now, text, stype
+        return await ctx.send(":ok_hand: Статус успешно изменён.")
 
     # ==== GUILD COMMANDS ==== #
 
