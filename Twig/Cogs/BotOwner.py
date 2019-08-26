@@ -22,7 +22,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
     async def _mem(self, ctx):
         memInfo = psutil.Process(os.getpid()).memory_info()
 
-        embed = discord.Embed(colour=SECONDARY_COLOR, title=":rosette: Memory Usage")
+        embed = discord.Embed(colour=SECONDARY_COLOR, title=f":rosette: Memory Usage | PID {os.getpid()}")
         embed.add_field(name="Resident Set Size", value=f"{round(memInfo.rss / 1e+6, 1)} МБ")
         embed.add_field(name="Virtual Memory Size", value=f"{round(memInfo.vms / 1e+6, 1)} МБ")
 
