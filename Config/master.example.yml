@@ -6,6 +6,7 @@ CONFIG:
   XP_LOG_CHANNEL_ID: 276430581468889089 # Поменяйте на ID канала для лога, связанного с опытом и уровнями
   STATUS: "with XP orbs"
   SHOW_NO_PERMS_MESSAGES: true # отобржвть сообщения о недостатке прав или нет (true / false)
+  GIPHY_API_KEY: abcdefg12345 # ключ API GIPHY
 
 WHITELIST:
   - 612406451109101599 # The Library

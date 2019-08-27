@@ -8,6 +8,39 @@ class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(name="gif")
+    @commands.cooldown(1, 45, BucketType.user)
+    async def _gif(self, ctx, *, query=None):
+        if query is None:
+            return await ctx.send(embed=discord.Embed(
+                colour=ERROR_COLOR, description=':x: Вы не указали запрос поиска!')
+            )
+
+        msg = await ctx.send(":repeat: Выполняю поиск...")
+
+        try:
+            embed = discord.Embed(colour=SECONDARY_COLOR)
+            query = query.replace(" ", "+")
+            url = f"http://api.giphy.com/v1/gifs/search?q={query}&api_key={GIPHY_API}&limit=10"
+            session = aiohttp.ClientSession()
+            response = await session.get(url)
+            await session.close()
+            gif_choice = random.randint(0, 9)
+            data = json.loads(await response.text())
+            img_data = {
+                "original_url": data['data'][gif_choice]['images']['original']['url'],
+                "title": data['data'][gif_choice]["title"],
+                "url": data['data'][gif_choice]["url"]
+            }
+            embed.set_image(url=img_data['original_url'])
+            embed.description = f"[→ {img_data['title'][:-3]}]({img_data['original_url']})"
+            embed.set_footer(text=f"Запрошено пользователем {str(ctx.author)}", icon_url=ctx.author.avatar_url)
+            embed.timestamp = datetime.datetime.utcnow()
+            url = session = response = gif_choice = data = img_data = None
+            return await msg.edit(content='', embed=embed)
+        except:
+            return await msg.edit(content=":x: Ошибка! Попробуйте снова.")
+
     @commands.command(name="ping", brief=CMD_INFO['PING'])
     @commands.cooldown(1, 15, BucketType.user)
     async def _ping(self, ctx):

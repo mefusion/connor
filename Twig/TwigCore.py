@@ -27,6 +27,8 @@ import random
 import subprocess
 import psutil
 import yaml
+import requests
+import urllib
 print('[CORE] Imports are ready...')
 
 # Получение токена
