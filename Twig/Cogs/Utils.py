@@ -33,7 +33,7 @@ class Utils(commands.Cog, name='Разное'):
                 "url": data['data'][gif_choice]["url"]
             }
             embed.set_image(url=img_data['original_url'])
-            embed.description = f"[→ {img_data['title'][:-3]}]({img_data['original_url']})"
+            embed.description = f"[→ {img_data['title']}]({img_data['original_url']})"
             embed.set_footer(text=f"Запрошено пользователем {str(ctx.author)}", icon_url=ctx.author.avatar_url)
             embed.timestamp = datetime.datetime.utcnow()
             url = session = response = gif_choice = data = img_data = None
