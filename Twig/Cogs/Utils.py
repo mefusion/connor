@@ -19,7 +19,7 @@ class Utils(commands.Cog, name='Разное'):
         msg = await ctx.send(":repeat: Выполняю поиск...")
 
         try:
-            embed = discord.Embed(colour=SECONDARY_COLOR)
+            embed = discord.Embed()
             query = query.replace(" ", "+")
             url = f"http://api.giphy.com/v1/gifs/search?q={query}&api_key={GIPHY_API}&limit=10"
             session = aiohttp.ClientSession()
@@ -39,7 +39,7 @@ class Utils(commands.Cog, name='Разное'):
             url = session = response = gif_choice = data = img_data = None
             return await msg.edit(content='', embed=embed)
         except:
-            return await msg.edit(content=":x: Ошибка! Попробуйте снова.")
+            return await msg.edit(content=":x: Ошибка!")
 
     @commands.command(name="ping", brief=CMD_INFO['PING'])
     @commands.cooldown(1, 15, BucketType.user)
