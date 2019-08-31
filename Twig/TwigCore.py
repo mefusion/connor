@@ -29,6 +29,8 @@ import psutil
 import yaml
 import requests
 import urllib
+import unicodedata
+
 print('[CORE] Imports are ready...')
 
 # Получение токена

@@ -97,19 +97,13 @@ class Utils(commands.Cog, name='Разное'):
 
         embed = discord.Embed()
 
-        if user.bot is True:
-            bot_or_not = 'Да'
-        else:
-            bot_or_not = 'Нет'
-
         if user.id in BOT_MAINTAINERS:
-            embed.description = ':heart: Этот пользователь поддерживает моё существование!'
+            embed.description = '\N{HEAVY BLACK HEART} Это очень классный человек - мой создатель!'
 
         embed.colour = DEFAULT_COLOR
         embed.set_thumbnail(url=user.avatar_url)
         embed.add_field(name='Имя пользователя', value=f'{user.name}#{user.discriminator}')
         embed.add_field(name='Идентификатор', value=str(user.id))
-        embed.add_field(name='Бот?', value=bot_or_not)
         embed.add_field(name='Ссылка на аватар', value=f'[Перейти по ссылке]({user.avatar_url})')
 
         if member is not None:
@@ -128,25 +122,43 @@ class Utils(commands.Cog, name='Разное'):
 
             embed.add_field(name='Статус', value=member_status)
 
-            if member.activity is not None:
-                if member.activity.type == discord.ActivityType.playing:
-                    embed.add_field(name='Активность', value=f'Играет в {member.activity.name}')
-                elif member.activity.type == discord.ActivityType.streaming:
-                    embed.add_field(name='Активность', value=f'Стримит {member.activity.name}')
-                elif member.activity.type == discord.ActivityType.watching:
-                    embed.add_field(name='Активность', value=f'Смотрит {member.activity.name}')
-                elif member.activity.type == discord.ActivityType.listening:
-                    embed.add_field(name='Активность', value=f'Слушает {member.activity.title}')
-                else:
-                    embed.add_field(name='Активность', value='Неизвестно')
+            if member.bot is not True:
+                if member.activity is not None:
+                    if member.activity.type == discord.ActivityType.playing:
+                        embed.add_field(name='\N{VIDEO GAME} Играет в', value=f'{member.activity.name}', inline=False)
+                    elif member.activity.type == discord.ActivityType.streaming:
+                        embed.add_field(name='Стримит', value=f'{member.activity.name}', inline=False)
+                    elif member.activity.type == discord.ActivityType.watching:
+                        embed.add_field(name='\N{EYES} Смотрит', value=f'{member.activity.name}', inline=False)
+                    elif member.activity.type == discord.ActivityType.listening:
+                        track_url = f"https://open.spotify.com/track/{member.activity.track_id}"
+                        embed.add_field(name='\N{MUSICAL NOTE} Слушает',
+                                        value=f'[{member.activity.artist.replace(";", ",")} \N{EM DASH} {member.activity.title}]({track_url})',
+                                        inline=False)
+                    else:
+                        embed.add_field(name='Неизвестный тип активности', value='\U00002753 Неизвестно', inline=False)
 
             embed.add_field(name='Присоединился в',
-                            value=f'`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`', inline=False)
+                            value=f'`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`')
 
         embed.add_field(name='Аккаунт создан в',
-                        value=f'`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`', inline=False)
+                        value=f'`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`')
 
         return await ctx.send(embed=embed)
+
+    # Взято из https://github.com/Rapptz/RoboDanny
+    @commands.command(name="char", aliases=('charinfo',))
+    async def _char(self, ctx, *, characters: str):
+        def to_string(c):
+            digit = f'{ord(c):x}'
+            name = unicodedata.name(c, 'Такое имя не найдено')
+            return f'`\\U{digit:>08}` \N{EM DASH} `\\N%s{name}%s` \N{EM DASH} {c}' % ("{", "}")
+
+        msg = '\n'.join(map(to_string, characters))
+        if len(msg) > 1900:
+            return await ctx.send('Слишком длинное сообщение.')
+        await ctx.send(embed=discord.Embed(colour=SECONDARY_COLOR, description=msg).set_author(
+            name="Команда скопирована из бота Robo Danny", url="https://github.com/Rapptz/RoboDanny"))
 
 
 def setup(bot):
