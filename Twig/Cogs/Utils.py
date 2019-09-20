@@ -3,6 +3,10 @@ from discord.ext import commands
 from Twig.TwigCore import *
 from Twig.Utils.Hugging import sendLove
 
+genius = lyricsgenius.Genius(GENIUS_API_KEY)
+genius.verbose = False
+genius.remove_section_headers = True
+
 
 class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
@@ -159,6 +163,33 @@ class Utils(commands.Cog, name='Разное'):
             return await ctx.send('Слишком длинное сообщение.')
         await ctx.send(embed=discord.Embed(colour=SECONDARY_COLOR, description=msg).set_author(
             name="Команда скопирована из бота Robo Danny", url="https://github.com/Rapptz/RoboDanny"))
+
+    @commands.command(name="lyrics")
+    @commands.cooldown(1, 30, BucketType.user)
+    async def _lyrics(self, ctx, *, query):
+        msg = await ctx.send("Начинаю поиск...")
+        try:
+            song = genius.search_song(query)
+            result = song.lyrics
+
+            if len(result) >= 2000:
+                result = result[:2020] + '\n\n*[...]*\n'
+
+            return await msg.edit(content="", embed=discord.Embed(
+                colour=SECONDARY_COLOR,
+                description=result
+            ).set_footer(
+                text=f'Запрошено пользователем {ctx.author}', icon_url=ctx.author.avatar_url
+            ).set_author(
+                name=f'{song.artist} — {song.title}', icon_url=song.song_art_image_url, url=song.url
+            ).add_field(
+                name='Ссылка на Genius', value=f'[Перейти по ссылке]({song.url})'
+            ).set_thumbnail(
+                url=song.song_art_image_url
+            ))
+        except Exception as err:
+            await msg.delete()
+            raise err
 
 
 def setup(bot):

@@ -24,6 +24,7 @@ try:
     MAIN_LOGS_CHANNEL = cfg['LOG_CHANNEL_ID']
     XP_LOGS_CHANNEL = cfg['XP_LOG_CHANNEL_ID']
     GIPHY_API = cfg['GIPHY_API_KEY']
+    GENIUS_API_KEY = cfg['GENIUS_API_KEY']
 except Exception as err:
     print(err)
 

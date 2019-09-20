@@ -30,6 +30,7 @@ import yaml
 import requests
 import urllib
 import unicodedata
+import lyricsgenius
 
 print('[CORE] Imports are ready...')
 
