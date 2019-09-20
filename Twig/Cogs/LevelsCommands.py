@@ -21,7 +21,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
             balance = temp[1]
             pos = i+1
             user = await self.bot.fetch_user(temp[0])
-            embed.add_field(name=f'#{pos} | {user}', value=f'С балансом **{balance} опыта**!', inline=False)
+            embed.add_field(name=f'#{pos} | {user}', value=f'**{balance} опыта**', inline=False)
 
             if i == 0:
                 embed.set_thumbnail(url=user.avatar_url)
