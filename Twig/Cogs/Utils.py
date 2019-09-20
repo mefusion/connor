@@ -79,7 +79,7 @@ class Utils(commands.Cog, name='Разное'):
             commit_msg = commit.message.replace('\n', ' ').replace('\r', '')
             if len(commit_msg) > 120:
                 commit_msg = commit_msg[:120] + "..."
-            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7], "https://google.com", commit_msg))
+            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7], f"https://github.com/runic-tears/twig/commit/{commit.hexsha}", commit_msg))
 
         embed = discord.Embed(colour=SECONDARY_COLOR)
         embed.add_field(name='Последние изменения', value=last_changes, inline=False)
