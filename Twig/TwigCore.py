@@ -32,6 +32,8 @@ import urllib
 import unicodedata
 import lyricsgenius
 
+repo = git.Repo(".git")
+
 print('[CORE] Imports are ready...')
 
 # Получение токена

@@ -69,24 +69,28 @@ class Utils(commands.Cog, name='Разное'):
     @commands.cooldown(1, 15, BucketType.user)
     async def _botinfo(self, ctx):
         uptime = int(time.time() - BOT_STARTED_AT)
-        uptime = time.strftime("%H h. %M m. %S s.", time.gmtime(uptime))
-        uptime = uptime.replace("h.", "ч.").replace("m.", "мин.").replace("s.", "сек.")
-        memberOfGuilds = str(len(self.bot.guilds))
-        repo = git.Repo(".git")
-        sha = repo.head.object.hexsha
-        short_sha = repo.git.rev_parse(sha, short=7)
+        uptime = '{:02d} ч. {:02d} м. {:02d} с.'.format(uptime // 3600, (uptime % 3600 // 60), uptime % 60)
+        short_sha = repo.git.rev_parse(repo.head.object.hexsha, short=7)
+        last_changes = ''
 
-        embed = discord.Embed(
-            title=f'{self.bot.user.name}',
-            description='Привет! Я бот, меня зовут Твиг.\n\n',
-            colour=SECONDARY_COLOR
-        )
-        embed.timestamp = datetime.datetime.utcnow()
-        embed.description += f'Я использую `Python {sys.version[:5]}` и библиотеку `discord.py v{discord.__version__}`.\n'
-        embed.description += f'А ещё я работаю на {memberOfGuilds} серверах!'
-        embed.add_field(name='Версия', value=f'`{short_sha}`')
-        embed.add_field(name='Аптайм', value=f'`{uptime}`')
+        commits = repo.iter_commits('--all', max_count=3)
+
+        for commit in commits:
+            commit_msg = commit.message.replace('\n', ' ').replace('\r', '')
+            if len(commit_msg) > 120:
+                commit_msg = commit_msg[:120] + "..."
+            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7], "https://google.com", commit_msg))
+
+        embed = discord.Embed(colour=SECONDARY_COLOR)
+        embed.add_field(name='Последние изменения', value=last_changes, inline=False)
+        embed.add_field(name='Время работы', value=f'`{uptime}`')
+        embed.add_field(name='Аккаунт создан в', value=self.bot.user.created_at.strftime("%d.%m.%Y %H:%M:%S (UTC)"))
         embed.add_field(name='GitHub', value=f'[Перейти по ссылке](https://github.com/runic-tears/twig)')
+        embed.add_field(name='Python', value=f'<:Python:624536559777087490> `{sys.version[:5]}`')
+        embed.add_field(name='discord.py', value=f'<:Dpy:624536687959080962> ` {discord.__version__}`')
+        embed.add_field(name='Версия', value=f'`{short_sha}`')
+        embed.set_author(name=f'{self.bot.user}', icon_url=self.bot.user.avatar_url)
+        embed.timestamp = datetime.datetime.utcnow()
 
         return await ctx.send(embed=embed)
 
