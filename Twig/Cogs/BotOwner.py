@@ -116,8 +116,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
         stat = discord.Activity(name="Сбрасывание статуса...", type=discord.ActivityType.playing)
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)
-        stat = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help', type=discord.ActivityType.playing)
-        await self.bot.change_presence(activity=stat)
+        await self.bot.change_presence(activity=DEFAULT_STATUS)
 
         del stat
         return await ctx.send(":ok_hand: Статус успешно сброшен.")
@@ -125,19 +124,20 @@ class BotOwner(commands.Cog, name='Владелец бота'):
     @_status.command(name="set", brief=CMD_INFO['STATUS_SET'])
     async def _status_set(self, ctx, stype, *, text):
         if (stype == 'playing') or (stype == '1'):
-            stype = discord.ActivityType.playing
+            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
         elif (stype == 'watching') or (stype == '2'):
-            stype = discord.ActivityType.watching
+            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.watching)
         elif (stype == 'listening') or (stype == '3'):
-            stype = discord.ActivityType.listening
+            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.listening)
             # Немного сломано, нужно понять в чём проблема.
         elif (stype == 'streaming') or (stype == '4'):
-            stype = discord.ActivityType.streaming
-            # Если в качестве типа статуса было указано что-то странное
+            if " | " not in text:
+                return await ctx.send("Ссылку обязательно нужно указать `<название> | <ссылка>`")
+            text = text.split(" | ")
+            playing_now = discord.Activity(name=str(text[0]), url=str(text[1]), type=discord.ActivityType.streaming)
         else:
-            stype = discord.ActivityType.playing
+            playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
 
-        playing_now = discord.Activity(name=str(text), type=stype)
         await self.bot.change_presence(activity=playing_now)
 
         del playing_now, text, stype

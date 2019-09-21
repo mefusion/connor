@@ -1,4 +1,5 @@
 import yaml
+import discord
 
 # Попытка получения конфигурации
 try:
@@ -25,6 +26,7 @@ try:
     XP_LOGS_CHANNEL = cfg['XP_LOG_CHANNEL_ID']
     GIPHY_API = cfg['GIPHY_API_KEY']
     GENIUS_API_KEY = cfg['GENIUS_API_KEY']
+    DEFAULT_STATUS = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help', url="https://twitch.tv/defracted", type=discord.ActivityType.streaming)
 except Exception as err:
     print(err)
 

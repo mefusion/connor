@@ -14,10 +14,7 @@ async def on_ready():
     await init_sql()
     print(f'[CORE] The bot is ready for duty!')
     await Log(log_data=':wave: Я уже работаю!').send(bot, MAIN_LOGS_CHANNEL)
-    playing_now = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help',
-                                   type=discord.ActivityType.playing)
-    await bot.change_presence(activity=playing_now)
-    del playing_now
+    await bot.change_presence(activity=DEFAULT_STATUS)
     return print(f'[CORE] Logged in as {bot.user.name}#{bot.user.discriminator}')
 
 
