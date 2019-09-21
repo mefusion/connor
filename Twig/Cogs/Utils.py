@@ -174,6 +174,10 @@ class Utils(commands.Cog, name='Разное'):
         msg = await ctx.send("Начинаю поиск...")
         try:
             song = genius.search_song(query)
+
+            if song.artist.lower() in ARTISTS_BLACKLIST:
+                return await msg.edit(content=":warning: Простите, но я вывожу тексты настоящих творцов, а не жалкое подобие искусства...")
+
             result = song.lyrics
 
             if len(result) >= 2000:
