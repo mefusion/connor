@@ -45,7 +45,7 @@ class Utils(commands.Cog, name='Разное'):
         except:
             return await msg.edit(content=":x: Ошибка!")
 
-    @commands.command(name="ping", brief=CMD_INFO['PING'])
+    @commands.command(name="ping", hidden=True)
     @commands.cooldown(1, 15, BucketType.user)
     async def _ping(self, ctx):
         t1 = time.perf_counter()
@@ -79,7 +79,9 @@ class Utils(commands.Cog, name='Разное'):
             commit_msg = commit.message.replace('\n', ' ').replace('\r', '')
             if len(commit_msg) > 120:
                 commit_msg = commit_msg[:120] + "..."
-            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7], f"https://github.com/runic-tears/twig/commit/{commit.hexsha}", commit_msg))
+            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7],
+                                                          f"https://github.com/runic-tears/twig/commit/{commit.hexsha}",
+                                                          commit_msg))
 
         embed = discord.Embed(colour=SECONDARY_COLOR)
         embed.add_field(name='Последние изменения', value=last_changes, inline=False)
@@ -176,7 +178,8 @@ class Utils(commands.Cog, name='Разное'):
             song = genius.search_song(query)
 
             if song.artist.lower() in ARTISTS_BLACKLIST:
-                return await msg.edit(content=":warning: Простите, но я вывожу тексты настоящих творцов, а не жалкое подобие искусства...")
+                return await msg.edit(
+                    content=":warning: Простите, но я вывожу тексты настоящих творцов, а не жалкое подобие искусства...")
 
             result = song.lyrics
 
@@ -198,6 +201,27 @@ class Utils(commands.Cog, name='Разное'):
         except Exception as err:
             await msg.delete()
             raise err
+
+    @commands.command(name="compare", aliases=('choose',))
+    @commands.cooldown(1, 5, BucketType.user)
+    async def _compare(self, ctx, *things: commands.clean_content):
+        """Выбрать что-то одно
+
+        Чтобы указать несколько вариантов, используйте двойные кавычки: "thing 1" "thing 2" ... "thing 10"
+        """
+        if len(things) < 2:
+            return await ctx.send('Но ведь тут нет выбора \N{THINKING FACE}')
+        elif len(things) > 250:
+            return await ctx.send("Вы пытаетесь сравнить слишком многое...")
+
+        return await ctx.send(embed=discord.Embed(
+            title=f'Рандомайзер {len(things)*3*1000}',
+            colour=SECONDARY_COLOR,
+            description=f'Думаю, лучший выбор - это **{random.choice(things)}**.',
+            timestamp=datetime.datetime.utcnow()
+        ).set_footer(
+            text=f'Инициализировал {ctx.author}', icon_url=ctx.author.avatar_url
+        ))
 
 
 def setup(bot):

@@ -20,7 +20,7 @@ class Admin(commands.Cog, name='Админские'):
             return await ctx.send('Вы не указали субкоманду.')
 
     @_erole.command(name="color", aliases=("colour",))
-    async def _erole_color(self, ctx, r: discord.Role = None, c: discord.Colour = None):
+    async def _erole_color(self, ctx, r: commands.RoleConverter = None, c: commands.ColourConverter = None):
         if r is None:
             return await ctx.send(":x: Вы не указали роль.")
         elif c is None:

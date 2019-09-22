@@ -10,7 +10,11 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 class HelpCustomization(commands.Cog, name='Помощь'):
     def __init__(self, client):
         self._original_help_command = client.help_command
-        client.help_command = MyHelpCommand(indent=1, no_category='Без Категории')
+        client.help_command = MyHelpCommand(
+            indent=1,
+            no_category='Без Категории',
+            command_attrs=dict(hidden=True)
+        )
         client.help_command.cog = self
 
 
