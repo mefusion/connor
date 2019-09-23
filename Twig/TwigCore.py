@@ -33,7 +33,7 @@ import unicodedata
 import lyricsgenius
 
 repo = git.Repo(".git")
-ARTISTS_BLACKLIST = ('face', 'фэйс', 'lida')
+ARTISTS_BLACKLIST = ('face', 'фэйс', 'lida', 'rasa')
 
 print('[CORE] Imports are ready...')
 

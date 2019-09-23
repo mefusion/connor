@@ -173,9 +173,15 @@ class Utils(commands.Cog, name='Разное'):
     @commands.command(name="lyrics")
     @commands.cooldown(1, 30, BucketType.user)
     async def _lyrics(self, ctx, *, query):
-        msg = await ctx.send("Начинаю поиск...")
+        """Поиск текстов на Genius
+
+        Вы можете указать часть текста, имя исполнителя или название песни и т.п.
+        """
+        msg = await ctx.send("Начинаю поиск, ждите, это займёт время...")
         try:
             song = genius.search_song(query)
+
+            await asyncio.sleep(0.25)
 
             if song.artist.lower() in ARTISTS_BLACKLIST:
                 return await msg.edit(
@@ -215,7 +221,7 @@ class Utils(commands.Cog, name='Разное'):
             return await ctx.send("Вы пытаетесь сравнить слишком многое...")
 
         return await ctx.send(embed=discord.Embed(
-            title=f'Рандомайзер {len(things)*3*1000}',
+            title=f'Рандомайзер {len(things) * 3 * 1000}',
             colour=SECONDARY_COLOR,
             description=f'Думаю, лучший выбор - это **{random.choice(things)}**.',
             timestamp=datetime.datetime.utcnow()
