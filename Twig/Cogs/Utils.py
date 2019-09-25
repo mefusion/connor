@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from Twig.TwigCore import *
-from Twig.Utils.Hugging import sendLove
 
 genius = lyricsgenius.Genius(GENIUS_API_KEY)
 genius.verbose = False
@@ -11,39 +10,6 @@ genius.remove_section_headers = True
 class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command(name="gif")
-    @commands.cooldown(1, 45, BucketType.user)
-    async def _gif(self, ctx, *, query=None):
-        if query is None:
-            return await ctx.send(embed=discord.Embed(
-                colour=ERROR_COLOR, description=':x: Вы не указали запрос поиска!')
-            )
-
-        msg = await ctx.send(":repeat: Выполняю поиск...")
-
-        try:
-            embed = discord.Embed()
-            query = query.replace(" ", "+")
-            url = f"http://api.giphy.com/v1/gifs/search?q={query}&api_key={GIPHY_API}&limit=10"
-            session = aiohttp.ClientSession()
-            response = await session.get(url)
-            await session.close()
-            gif_choice = random.randint(0, 9)
-            data = json.loads(await response.text())
-            img_data = {
-                "original_url": data['data'][gif_choice]['images']['original']['url'],
-                "title": data['data'][gif_choice]["title"],
-                "url": data['data'][gif_choice]["url"]
-            }
-            embed.set_image(url=img_data['original_url'])
-            embed.description = f"[→ {img_data['title']}]({img_data['original_url']})"
-            embed.set_footer(text=f"Запрошено пользователем {str(ctx.author)}", icon_url=ctx.author.avatar_url)
-            embed.timestamp = datetime.datetime.utcnow()
-            url = session = response = gif_choice = data = img_data = None
-            return await msg.edit(content='', embed=embed)
-        except:
-            return await msg.edit(content=":x: Ошибка!")
 
     @commands.command(name="ping", hidden=True)
     @commands.cooldown(1, 15, BucketType.user)
@@ -57,13 +23,6 @@ class Utils(commands.Cog, name='Разное'):
         return await message.edit(content='', embed=discord.Embed(
             colour=discord.Colour.blue(),
             description=f":heartbeat: HEARTBEAT: **{latency}мс** \n:incoming_envelope: REST: **{rest}мс**"))
-
-    @commands.command(name='hug', brief=CMD_INFO['HUG'])
-    @commands.cooldown(1, 10, BucketType.member)
-    async def _hug(self, ctx, target: discord.User = None):
-        sender = str(ctx.author)
-        msg = sendLove(target.mention, sender)
-        return await ctx.send(msg)
 
     @commands.command(name='botinfo', aliases=('about',), brief=CMD_INFO['BOTINFO'])
     @commands.cooldown(1, 15, BucketType.user)
@@ -94,7 +53,9 @@ class Utils(commands.Cog, name='Разное'):
         embed.set_author(name=f'{self.bot.user}', icon_url=self.bot.user.avatar_url)
         embed.timestamp = datetime.datetime.utcnow()
 
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
+
+        del embed
 
     @commands.command(name='userinfo', aliases=('info',), brief=CMD_INFO['USERINFO'])
     @commands.cooldown(1, 10, type=BucketType.user)
@@ -154,11 +115,14 @@ class Utils(commands.Cog, name='Разное'):
         embed.add_field(name='Аккаунт создан в',
                         value=f'`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`')
 
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
+
+        del embed
 
     # Взято из https://github.com/Rapptz/RoboDanny
     @commands.command(name="char", aliases=('charinfo',))
     async def _char(self, ctx, *, characters: str):
+        """Выводит информацию о символах"""
         def to_string(c):
             digit = f'{ord(c):x}'
             name = unicodedata.name(c, 'Такое имя не найдено')
@@ -192,11 +156,11 @@ class Utils(commands.Cog, name='Разное'):
             if len(result) >= 2000:
                 result = result[:2020] + '\n\n*[...]*\n'
 
-            return await msg.edit(content="", embed=discord.Embed(
+            await msg.edit(content="", embed=discord.Embed(
                 colour=SECONDARY_COLOR,
                 description=result
             ).set_footer(
-                text=f'Запрошено пользователем {ctx.author}', icon_url=ctx.author.avatar_url
+                text=f'Команду инциализировал(а) {ctx.author}', icon_url=ctx.author.avatar_url
             ).set_author(
                 name=f'{song.artist} — {song.title}', icon_url=song.song_art_image_url, url=song.url
             ).add_field(
@@ -204,30 +168,11 @@ class Utils(commands.Cog, name='Разное'):
             ).set_thumbnail(
                 url=song.song_art_image_url
             ))
+
+            del song
         except Exception as err:
             await msg.delete()
             raise err
-
-    @commands.command(name="compare", aliases=('choose',))
-    @commands.cooldown(1, 5, BucketType.user)
-    async def _compare(self, ctx, *things: commands.clean_content):
-        """Выбрать что-то одно
-
-        Чтобы указать несколько вариантов, используйте двойные кавычки: "thing 1" "thing 2" ... "thing 10"
-        """
-        if len(things) < 2:
-            return await ctx.send('Но ведь тут нет выбора \N{THINKING FACE}')
-        elif len(things) > 250:
-            return await ctx.send("Вы пытаетесь сравнить слишком многое...")
-
-        return await ctx.send(embed=discord.Embed(
-            title=f'Рандомайзер {len(things) * 3 * 1000}',
-            colour=SECONDARY_COLOR,
-            description=f'Думаю, лучший выбор - это **{random.choice(things)}**.',
-            timestamp=datetime.datetime.utcnow()
-        ).set_footer(
-            text=f'Инициализировал {ctx.author}', icon_url=ctx.author.avatar_url
-        ))
 
 
 def setup(bot):

@@ -4,7 +4,7 @@ from Twig.TwigCore import *
 from Twig.Utils.Logger import Log
 
 
-class BotOwner(commands.Cog, name='Владелец бота'):
+class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
         self._last_result = None
@@ -203,7 +203,7 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             await ctx.send(f'**`УСПЕХ`** - Модуль `{cog}` успешно выгружен!')
 
     @_cog.command(name='refresh')
-    async def _cog_refresh(self, ctx, *, cog: str):
+    async def _cog_refresh(self, ctx, *, cog: commands.clean_content):
         cog = f'Twig.Cogs.{cog}'
         try:
             self.bot.unload_extension(cog)
@@ -212,6 +212,21 @@ class BotOwner(commands.Cog, name='Владелец бота'):
             await ctx.send(f'**`ОШИБКА:`** {type(e).__name__} - {e}')
         else:
             await ctx.send(f'**`УСПЕХ`** -  Модуль `{cog}` успешно перезагружен!')
+
+    @commands.group(name='master-cfg')
+    async def _master_cfg(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await ctx.send(f"Вы не указали субкоманду, изучите `{ctx.prefix}help {ctx.command}`")
+
+    @_master_cfg.command(name='edit')
+    async def _master_cfg_edit(self, ctx, *, parameters: commands.clean_content = None):
+        """Изменяет параметры конфигурации
+
+        Аргумент должен иметь вид: <параметр> | <значение>
+        """
+        if parameters is None:
+            return await ctx.send("Вы не указали параметры")
+        return await ctx.send(f"In dev stage \nArguments were taken: `{parameters}` \n//TODO: Editing master.yml")
 
 
 def setup(bot):
