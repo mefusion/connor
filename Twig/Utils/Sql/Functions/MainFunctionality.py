@@ -1,7 +1,7 @@
 import aiosqlite
 import time
 
-DEFAULT_DB_FILENAME = 'twig-and-xp'
+DEFAULT_DB_FILENAME = 'xp-codename-apples'
 
 
 # Коннектор базы данных
