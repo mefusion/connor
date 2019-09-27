@@ -1,5 +1,7 @@
 # The Library
 
+PREFIX: "?"
+
 WELCOMER:
   ENABLED: true
   CHANNEL: 612406451863945257

@@ -26,7 +26,9 @@ try:
     XP_LOGS_CHANNEL = cfg['XP_LOG_CHANNEL_ID']
     GIPHY_API = cfg['GIPHY_API_KEY']
     GENIUS_API_KEY = cfg['GENIUS_API_KEY']
-    DEFAULT_STATUS = discord.Activity(name=BOT_STATUS + f' | {BOT_PREFIX}help', url="https://twitch.tv/defracted", type=discord.ActivityType.streaming)
+    DEFAULT_STATUS = discord.Activity(
+        name=BOT_STATUS + f' | {BOT_PREFIX}help', url="https://twitch.tv/defracted",
+        type=discord.ActivityType.streaming)
 except Exception as err:
     print(err)
 
@@ -42,3 +44,13 @@ try:
     del __temp__
 except Exception as err:
     print(err)
+
+
+def find_prefixes(message):
+    try:
+        # Подключение файла конфигурации префиксов
+        with open(f'./Config/{message}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
+            prefixes = yaml.safe_load(prefixes_cfg)
+            return prefixes['PREFIX']
+    except Exception as err:
+        raise err

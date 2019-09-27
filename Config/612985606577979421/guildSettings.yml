@@ -1,5 +1,7 @@
 # The Library: Forbidden Section
 
+PREFIX: "-"
+
 WELCOMER:
   ENABLED: true
   CHANNEL: 614409461393653760

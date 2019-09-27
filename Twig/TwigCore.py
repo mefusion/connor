@@ -35,23 +35,17 @@ import lyricsgenius
 repo = git.Repo(".git")
 ARTISTS_BLACKLIST = ('face', 'фэйс', 'lida', 'rasa')
 
-print('[CORE] Imports are ready...')
-
-# Получение токена
 env_path = pathlib.Path('./Config/token.env')
 load_dotenv(dotenv_path=env_path)
 BOT_TOKEN = os.getenv("TOKEN")
-print('[CORE] Token initialized...')
 
-# Цветовые коды
 ERROR_COLOR = 0xDD2E44
 SUCCESS_COLOR = 0x77B255
 SECONDARY_COLOR = 0x3B88C3
 DEFAULT_COLOR = discord.Colour.default()
 WARNING_COLOR = discord.Colour.gold()
 BLURPLE_COLOR = discord.Colour.blurple()
-
-# Время запуска
 BOT_STARTED_AT = int(time.time())
+DEFAULT_PREFIX = "?"
 
 print('[CORE] Core initialized!')

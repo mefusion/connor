@@ -8,9 +8,15 @@ class Fun(commands.Cog, name='Досуг'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='hug', brief=CMD_INFO['HUG'])
+    @commands.command(name='hug')
     @commands.cooldown(1, 10, BucketType.member)
     async def _hug(self, ctx, target: discord.User = None):
+
+        """Обнимает всяких разных людишек с:"""
+
+        if target is None:
+            return await ctx.send("Упс, кажется вы забыли указать человека!")
+
         sender = str(ctx.author)
         msg = sendLove(target.mention, sender)
         return await ctx.send(msg)
@@ -18,9 +24,9 @@ class Fun(commands.Cog, name='Досуг'):
     @commands.command(name="compare", aliases=('choose',))
     @commands.cooldown(1, 5, BucketType.user)
     async def _compare(self, ctx, *things: commands.clean_content):
-        """Выбрать что-то одно
+        """Случайный выбор из списка
 
-        Чтобы указать несколько вариантов, используйте двойные кавычки: "thing 1" "thing 2" ... "thing 10"
+        Чтобы указать несколько вариантов, используйте двойные кавычки: "thing 1" ... "thing 5"
         """
         if len(things) < 2:
             return await ctx.send('Но ведь тут нет выбора \N{THINKING FACE}')
@@ -39,7 +45,9 @@ class Fun(commands.Cog, name='Досуг'):
     @commands.command(name="gif")
     @commands.cooldown(1, 45, BucketType.user)
     async def _gif(self, ctx, *, query=None):
+
         """Находит всякие гифки"""
+
         if query is None:
             return await ctx.send(embed=discord.Embed(
                 colour=ERROR_COLOR, description=':x: Вы не указали запрос поиска!')

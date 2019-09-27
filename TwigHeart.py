@@ -3,9 +3,19 @@ from discord.ext import commands
 from Twig.TwigCore import *
 from Twig.Utils.Logger import Log
 from Twig.Utils.Sql.Functions.MainFunctionality import init_sql
+import errno
 
 
-bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(BOT_PREFIX))
+async def get_prefix(client, message):
+    try:
+        with open(f'./Config/{message.guild.id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
+            prefixes = yaml.safe_load(prefixes_cfg)
+            return commands.when_mentioned_or(*prefixes['PREFIX'])(client, message)
+    except Exception as error:
+        raise error
+
+
+bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
 
 @bot.event
@@ -30,6 +40,36 @@ async def on_resumed():
     return print(f'[CORE] Connection resumed.')
 
 
+@bot.event
+async def on_guild_join(guild):
+    if not os.path.exists(os.path.dirname(f'./Config/{guild.id}/guildSettings.yml')):
+        try:
+            print("[CORE] New guild, creating guildSetting.yml file...")
+            os.makedirs(os.path.dirname(f'./Config/{guild.id}/guildSettings.yml'))
+
+            guildSettingsTemp = dict(
+
+                PREFIX=DEFAULT_PREFIX,
+
+                WELCOMER=dict(
+                    ENABLED=False,
+                    CHANNEL=000000000000,
+                    MESSAGE_LIVES=20
+                )
+            )
+
+            with open(f'./Config/{guild.id}/guildSettings.yml', 'w+', encoding='utf-8') as guildSettingsFile:
+                yaml.dump(guildSettingsTemp, guildSettingsFile)
+
+            del guildSettingsTemp
+            print("[CORE] guildSettings.yml file was created!")
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+        except Exception as generics:
+            raise generics
+
+
 if __name__ == '__main__':
     for extension in INITIAL_COGS:
         try:
@@ -38,6 +78,5 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
             traceback.print_exc()
-
 
 bot.run(BOT_TOKEN, bot=True, reconnect=True)
