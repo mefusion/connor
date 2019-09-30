@@ -126,10 +126,10 @@ class Utils(commands.Cog, name='Разное'):
                         embed.add_field(name='Неизвестный тип активности', value='\U00002753 Неизвестно', inline=False)
 
             embed.add_field(name='Присоединился (UTC)',
-                            value=f'{(dt.datetime.utcnow() - member.joined_at).days} дней назад (`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
+                            value=f'{(dt.datetime.utcnow() - member.joined_at).days} days ago (`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
 
         embed.add_field(name='Аккаунт создан (UTC)',
-                        value=f'{(dt.datetime.utcnow() - user.created_at).days} дней назад (`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
+                        value=f'{(dt.datetime.utcnow() - user.created_at).days} days ago (`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
 
         await ctx.send(embed=embed)
 
