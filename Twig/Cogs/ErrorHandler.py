@@ -49,6 +49,10 @@ class ErrorHandler(commands.Cog):
             else:
                 return
 
+        elif isinstance(error, commands.BotMissingPermissions):
+            if ctx.command.qualified_name == "ban":
+                return await ctx.send(f":x: Мне недостатчно прав, чтобы это сделать.")
+
         elif isinstance(error, commands.CheckFailure):
             if BOT_IS_NO_PERMS_MSG_ENABLED is True:
                 return await ctx.send(f':lock: У вас нет доступа к команде `{ctx.command}`')

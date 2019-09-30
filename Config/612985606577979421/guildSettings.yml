@@ -1,6 +1,6 @@
 # The Library: Forbidden Section
 
-PREFIX: "-"
+PREFIX: ">"
 
 WELCOMER:
   ENABLED: true

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from Twig.TwigCore import *
+from ..Utils.Converters import DiscordUser
 
 genius = lyricsgenius.Genius(GENIUS_API_KEY)
 genius.verbose = False
@@ -10,6 +11,20 @@ genius.remove_section_headers = True
 class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(name="acknowledgments", aliases=("благодарности",))
+    @commands.cooldown(1, 10, BucketType.user)
+    async def acknowledgments(self, ctx):
+        e = discord.Embed()
+        e.title = "Благодарности"
+        e.colour = SECONDARY_COLOR
+        e.description = "Бот существует благодаря этим разработкам! Да здравствует Open Source!"
+        e.add_field(name="<:Python:624536559777087490> Python", value="[Узнать больше](https://python.org/)", inline=False)
+        e.add_field(name="<:Dpy:624536687959080962> discord.py", value="[Узнать больше](https://github.com/Rapptz/discord.py/)", inline=False)
+        e.add_field(name="<:bot:628238430706597898> R. Danny", value="[Узнать больше](https://github.com/Rapptz/RoboDanny)", inline=False)
+        e.add_field(name="<:bot:628238430706597898> Gear Bot", value="[Узнать больше](https://github.com/gearbot/GearBot)", inline=False)
+
+        await ctx.send(embed=e)
 
     @commands.command(name="ping", hidden=True)
     @commands.cooldown(1, 15, BucketType.user)
@@ -59,7 +74,7 @@ class Utils(commands.Cog, name='Разное'):
 
     @commands.command(name='userinfo', aliases=('info',), brief=CMD_INFO['USERINFO'])
     @commands.cooldown(1, 10, type=BucketType.user)
-    async def _userinfo(self, ctx, user: discord.User = None):
+    async def _userinfo(self, ctx, user: DiscordUser = None):
         if user is None:
             user = member = ctx.author
             user = await self.bot.fetch_user(user.id)

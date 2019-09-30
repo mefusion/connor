@@ -4,6 +4,7 @@ from Twig.TwigCore import *
 from Twig.Utils.Logger import Log
 from Twig.Utils.Sql.Functions.MainFunctionality import init_sql
 import errno
+import Twig.Utils.Converters as Converters
 
 
 async def get_prefix(client, message):
@@ -16,6 +17,8 @@ async def get_prefix(client, message):
 
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
+
+Converters.init(bot)
 
 
 @bot.event
@@ -53,8 +56,11 @@ async def on_guild_join(guild):
 
                 WELCOMER=dict(
                     ENABLED=False,
-                    CHANNEL=000000000000,
-                    MESSAGE_LIVES=20
+                    CHANNEL=0,
+                    MESSAGE_LIVES=20,
+                    LOGGING=dict(
+                        MOD_ACTIONS=0
+                    )
                 )
             )
 
