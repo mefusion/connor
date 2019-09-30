@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from Twig.TwigCore import *
 from ..Utils.Converters import DiscordUser
+import datetime as dt
 
 genius = lyricsgenius.Genius(GENIUS_API_KEY)
 genius.verbose = False
@@ -89,7 +90,7 @@ class Utils(commands.Cog, name='Разное'):
         embed.colour = DEFAULT_COLOR
         embed.set_thumbnail(url=user.avatar_url)
         embed.add_field(name='Имя пользователя', value=f'{user.name}#{user.discriminator}')
-        embed.add_field(name='Идентификатор', value=str(user.id))
+        embed.add_field(name='ID', value=str(user.id))
         embed.add_field(name='Ссылка на аватар', value=f'[Перейти по ссылке]({user.avatar_url})')
 
         if member is not None:
@@ -124,11 +125,11 @@ class Utils(commands.Cog, name='Разное'):
                     else:
                         embed.add_field(name='Неизвестный тип активности', value='\U00002753 Неизвестно', inline=False)
 
-            embed.add_field(name='Присоединился в',
-                            value=f'`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`')
+            embed.add_field(name='Присоединился (UTC)',
+                            value=f'{(dt.datetime.utcnow() - member.joined_at).days} дней назад (`{member.joined_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
 
-        embed.add_field(name='Аккаунт создан в',
-                        value=f'`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f %Z%z")} (UTC)`')
+        embed.add_field(name='Аккаунт создан (UTC)',
+                        value=f'{(dt.datetime.utcnow() - user.created_at).days} дней назад (`{user.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)')
 
         await ctx.send(embed=embed)
 
