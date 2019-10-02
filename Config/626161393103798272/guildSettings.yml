@@ -1,4 +1,4 @@
-PREFIX: '?'
+PREFIX: '>'
 WELCOMER:
   CHANNEL: 0
   ENABLED: false

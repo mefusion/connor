@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-from Twig.TwigCore import *
-from Twig.Utils.Logger import Log
-from Twig.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data, add_user, del_user, fetch_table
+from Saber.SaberCore import *
+from Saber.Utils.Logger import Log
+from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data, add_user, del_user, fetch_table
 
 
 class XPManagement(commands.Cog, name="Управление XP"):

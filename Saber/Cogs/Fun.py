@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from Twig.TwigCore import *
-from Twig.Utils.Hugging import sendLove
+from Saber.SaberCore import *
+from Saber.Utils.Hugging import sendLove
 
 
 class Fun(commands.Cog, name='Досуг'):
@@ -82,7 +82,10 @@ class Fun(commands.Cog, name='Досуг'):
             except:
                 pass
 
-            return await msg.edit(content=":x: Ошибка!")
+            return await msg.edit(
+                content=":x: Ошибка!\n"
+                        "\N{SPIRAL NOTE PAD}И нет, мой создатель не имеет ни малейшего понятия как это исправить, все вопросы к создателям API Giphy."
+            )
 
 
 def setup(bot):

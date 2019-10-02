@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from Twig.TwigCore import *
-from Twig.Utils.Logger import Log
+from Saber.SaberCore import *
+from Saber.Utils.Logger import Log
 
 command_attrs = {'hidden': True}
 

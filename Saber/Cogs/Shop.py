@@ -1,9 +1,9 @@
-from Twig.TwigCore import *
+from Saber.SaberCore import *
 import discord
 from discord.ext import commands
-from Twig.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data
-from Twig.Utils.ShopGen import get_roles_shop_list
-from Twig.Utils.Logger import Log
+from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data
+from Saber.Utils.ShopGen import get_roles_shop_list
+from Saber.Utils.Logger import Log
 
 
 class Shop(commands.Cog, name='Магазин'):

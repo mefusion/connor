@@ -3,11 +3,11 @@ from discord.ext import commands
 from dotenv import load_dotenv, dotenv_values
 from discord.ext.commands import BucketType
 from contextlib import redirect_stdout
-from Twig.Utils.AppLogging import *
+from Saber.Utils.AppLogging import *
 import json
 import time
 import datetime
-from Twig.Utils.Configurator import *
+from Saber.Utils.Configurator import *
 import pathlib
 import datetime
 import aiohttp

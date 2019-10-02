@@ -2,8 +2,8 @@ import discord
 import random
 import datetime
 from discord.ext import commands
-from Twig.TwigCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
-from Twig.Utils.Sql.Functions.MainFunctionality import *
+from Saber.SaberCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
+from Saber.Utils.Sql.Functions.MainFunctionality import *
 
 
 class EventsLevels(commands.Cog, name='Уровни'):

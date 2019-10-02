@@ -1,7 +1,7 @@
-from Twig.TwigCore import *
+from Saber.SaberCore import *
 import discord
 from discord.ext import commands
-from Twig.Utils.Sql.Functions.MainFunctionality import fetch_data, fetch_top5
+from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, fetch_top5
 
 
 class LevelsCommands(commands.Cog, name='Опыт'):

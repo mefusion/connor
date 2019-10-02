@@ -15,19 +15,20 @@ WHITELIST:
   - 626161393103798272 # Defracted Discord
 
 INITIAL_COGS: # Модули, загружаемые при запуске бота
-  - 'Twig.Cogs.Events'
-  - 'Twig.Cogs.Admin'
-  - 'Twig.Cogs.BotOwner'
-  - 'Twig.Cogs.EventsLevels'
-  - 'Twig.Cogs.TwigExclusives'
-  - 'Twig.Cogs.Utils'
-  - 'Twig.Cogs.ErrorHandler'
-  - 'Twig.Cogs.LevelsCommands'
-  - 'Twig.Cogs.HelpCustomization'
-  - 'Twig.Cogs.Shop'
-  - 'Twig.Cogs.Welcomer'
-  - 'Twig.Cogs.Fun'
-  - 'Twig.Cogs.XPManagement'
+  - 'Saber.Cogs.Events'
+  - 'Saber.Cogs.Admin'
+  - 'Saber.Cogs.BotOwner'
+  - 'Saber.Cogs.EventsLevels'
+  - 'Saber.Cogs.TwigExclusives'
+  - 'Saber.Cogs.Utils'
+  - 'Saber.Cogs.ErrorHandler'
+  - 'Saber.Cogs.LevelsCommands'
+  - 'Saber.Cogs.HelpCustomization'
+  - 'Saber.Cogs.Shop'
+  - 'Saber.Cogs.Welcomer'
+  - 'Saber.Cogs.Fun'
+  - 'Saber.Cogs.XPManagement'
+  - 'Saber.Cogs.Moderation'
 
 IGNORED_CHANNELS: # Названия каналов, которые будут игнорироваться при получении опыта
   - 'commands'

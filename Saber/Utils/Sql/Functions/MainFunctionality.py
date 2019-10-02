@@ -6,18 +6,18 @@ DEFAULT_DB_FILENAME = 'xp-codename-apples'
 
 # Коннектор базы данных
 async def connect_sqlite(filename):
-    return await aiosqlite.connect(f'./Twig/Utils/Sql/Data/{str(filename)}.sqlite')
+    return await aiosqlite.connect(f'./Saber/Utils/Sql/Data/{str(filename)}.sqlite')
 
 
 # Инициализатор БД
 async def init_sql():
-    con = await aiosqlite.connect(f'./Twig/Utils/Sql/Data/{DEFAULT_DB_FILENAME}.sqlite')
+    con = await aiosqlite.connect(f'./Saber/Utils/Sql/Data/{DEFAULT_DB_FILENAME}.sqlite')
 
     await con.execute("CREATE TABLE IF NOT EXISTS data(guild INTEGER, user INTEGER, xp INTEGER, lastTimeEdited INTEGER)")
     await con.commit()
 
     await con.close()
-    return print(f'[CORE:SQL] Database Twig/SQL/db/{DEFAULT_DB_FILENAME}.sqlite initialized!')
+    return print(f'[CORE:SQL] Database Saber/SQL/db/{DEFAULT_DB_FILENAME}.sqlite initialized!')
 
 
 # Добавить нового пользователя в таблицу

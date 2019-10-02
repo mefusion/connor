@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from Twig.TwigCore import *
-from Twig.Utils.Logger import Log
+from Saber.SaberCore import *
+from Saber.Utils.Logger import Log
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
