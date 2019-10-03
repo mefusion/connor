@@ -1,10 +1,14 @@
 import discord
 from discord.ext import commands
-from Saber.SaberCore import *
+import Saber.SaberCore as Saber
 from Saber.Utils.Logger import Log
 from Saber.Utils.Sql.Functions.MainFunctionality import init_sql
 import errno
 import Saber.Utils.Converters as Converters
+import yaml
+import os
+import traceback
+import sys
 
 
 async def get_prefix(client, message):
@@ -26,20 +30,14 @@ async def on_ready():
     # Инициализация БД
     await init_sql()
     print(f'[CORE] The bot is ready for duty!')
-    await Log(log_data=':wave: Я уже работаю!').send(bot, MAIN_LOGS_CHANNEL)
-    await bot.change_presence(activity=DEFAULT_STATUS)
+    await Log(log_data=':wave: Я уже работаю!').send(bot, Saber.MAIN_LOGS_CHANNEL)
+    await bot.change_presence(activity=Saber.DEFAULT_STATUS)
     return print(f'[CORE] Logged in as {bot.user.name}#{bot.user.discriminator}')
 
 
 @bot.event
-async def on_disconnect():
-    await Log(log_data=':warning: Соединение потеряно!', log_type='warning').send(bot, MAIN_LOGS_CHANNEL)
-    return print(f'[CORE] Connection lost!')
-
-
-@bot.event
 async def on_resumed():
-    await Log(log_data=':repeat: Соединение восстановлено.').send(bot, MAIN_LOGS_CHANNEL)
+    await Log(log_data='\N{INFORMATION SOURCE} Соединение было потеряно и успешно восстановлено.').send(bot, Saber.MAIN_LOGS_CHANNEL)
     return print(f'[CORE] Connection resumed.')
 
 
@@ -52,7 +50,7 @@ async def on_guild_join(guild):
 
             guildSettingsTemp = dict(
 
-                PREFIX=DEFAULT_PREFIX,
+                PREFIX=Saber.DEFAULT_PREFIX,
 
                 WELCOMER=dict(
                     ENABLED=False,
@@ -77,7 +75,7 @@ async def on_guild_join(guild):
 
 
 if __name__ == '__main__':
-    for extension in INITIAL_COGS:
+    for extension in Saber.INITIAL_COGS:
         try:
             bot.load_extension(extension)
             print(f'[CORE] Cog {extension} has been loaded!')
@@ -85,4 +83,4 @@ if __name__ == '__main__':
             print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
             traceback.print_exc()
 
-bot.run(BOT_TOKEN, bot=True, reconnect=True)
+Saber.authorize(bot)

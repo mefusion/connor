@@ -20,10 +20,16 @@ class Utils(commands.Cog, name='Разное'):
         e.title = "Благодарности"
         e.colour = SECONDARY_COLOR
         e.description = "Бот существует благодаря этим разработкам! Да здравствует Open Source!"
-        e.add_field(name="<:Python:624536559777087490> Python", value="[Узнать больше](https://python.org/)", inline=False)
-        e.add_field(name="<:Dpy:624536687959080962> discord.py", value="[Узнать больше](https://github.com/Rapptz/discord.py/)", inline=False)
-        e.add_field(name="<:bot:628238430706597898> R. Danny", value="[Узнать больше](https://github.com/Rapptz/RoboDanny)", inline=False)
-        e.add_field(name="<:bot:628238430706597898> Gear Bot", value="[Узнать больше](https://github.com/gearbot/GearBot)", inline=False)
+        e.add_field(name="<:Python:624536559777087490> Python", value="[Узнать больше](https://python.org/)",
+                    inline=False)
+        e.add_field(name="\N{TABLE TENNIS PADDLE AND BALL} ZEIW",
+                    value="[Узнать больше](https://zeiw.me/)", inline=False)
+        e.add_field(name="<:Dpy:624536687959080962> discord.py",
+                    value="[Узнать больше](https://github.com/Rapptz/discord.py/)", inline=False)
+        e.add_field(name="<:bot:628238430706597898> R. Danny",
+                    value="[Узнать больше](https://github.com/Rapptz/RoboDanny)", inline=False)
+        e.add_field(name="<:bot:628238430706597898> Gear Bot",
+                    value="[Узнать больше](https://github.com/gearbot/GearBot)", inline=False)
 
         await ctx.send(embed=e)
 
@@ -54,9 +60,11 @@ class Utils(commands.Cog, name='Разное'):
             commit_msg = commit.message.replace('\n', ' ').replace('\r', '')
             if len(commit_msg) > 120:
                 commit_msg = commit_msg[:120] + "..."
-            last_changes += ("[`{0}`]({1}) {2} \n".format(commit.hexsha[:7],
-                                                          f"https://github.com/runic-tears/saber/commit/{commit.hexsha}",
-                                                          commit_msg))
+            last_changes += ("[`{0}`]({1}) {2} \n".format(
+                commit.hexsha[:7],
+                f"https://github.com/runic-tears/saber/commit/{commit.hexsha}",
+                commit_msg
+            ))
 
         embed = discord.Embed(colour=SECONDARY_COLOR)
         embed.add_field(name='Последние изменения', value=last_changes, inline=False)
@@ -135,10 +143,68 @@ class Utils(commands.Cog, name='Разное'):
 
         del embed
 
+    @commands.command(name="server", aliases=("guildinfo", "serverinfo"))
+    @commands.cooldown(1, 10, BucketType.user)
+    async def serverinfo(self, ctx, *, guild=None):
+        if guild is None:
+            guild = ctx.guild
+        elif guild is not None:
+            try:
+                int(guild)
+            except ValueError:
+                return await ctx.send(":x: ID сервера не может быть строкой.")
+
+            guild = self.bot.get_guild(int(guild))
+
+            if guild is None:
+                return await ctx.send(":warning: Указан неизвестный сервер!")
+
+        e = discord.Embed()
+        e.set_author(name=f"{guild.name} ({guild.id})", icon_url=guild.icon_url)
+        e.colour = guild.get_role(guild.roles[-1].id).colour
+        e.add_field(name="Название сервера", value=guild.name)
+        e.add_field(name="ID", value=guild.id)
+        e.add_field(name="Регион", value=guild.region)
+
+        info = []
+        features = set(guild.features)
+        all_features = {
+            'PARTNERED': 'Partnered',
+            'VERIFIED': 'Verified',
+            'DISCOVERABLE': 'Server Discovery',
+            'INVITE_SPLASH': 'Invite Splash',
+            'VIP_REGIONS': 'VIP Voice Servers',
+            'VANITY_URL': 'Vanity Invite',
+            'MORE_EMOJI': 'More Emoji',
+            'COMMERCE': 'Commerce',
+            'LURKABLE': 'Lurkable',
+            'NEWS': 'News Channels',
+            'ANIMATED_ICON': 'Animated Icon',
+            'BANNER': 'Banner'
+        }
+
+        for feature, label in all_features.items():
+            if feature in features:
+                info.append(f'\N{WHITE HEAVY CHECK MARK}: {label}')
+
+        if info:
+            e.add_field(name='Фичи', value='\n'.join(info))
+
+        e.add_field(name="Владелец", value=guild.owner)
+        e.add_field(name="Участников", value=guild.member_count)
+        e.add_field(name="Текстовых каналов", value=str(len(guild.text_channels)))
+        e.add_field(name="Сервер создан (UTC)",
+                    value=f'{(dt.datetime.utcnow() - guild.created_at).days} days ago (`{guild.created_at.strftime("%Y-%m-%d %H:%M:%S.%f")}`)',
+                    inline=False)
+
+        await ctx.send(embed=e)
+        del e
+
     # Взято из https://github.com/Rapptz/RoboDanny
     @commands.command(name="char", aliases=('charinfo',))
     async def _char(self, ctx, *, characters: str):
         """Выводит информацию о символах"""
+
         def to_string(c):
             digit = f'{ord(c):x}'
             name = unicodedata.name(c, 'Такое имя не найдено')

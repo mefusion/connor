@@ -29,7 +29,7 @@ class DiscordUser(Converter):
                 user = await BOT.fetch_user(
                     await RangedInt(min=20000000000000000, max=9223372036854775807).convert(ctx, argument))
             except (ValueError, HTTPException):
-                pass
+                raise BadArgument(message="InvalidUserId")
 
         if user is None or (self.id_only and str(user.id) != argument):
             raise BadArgument()

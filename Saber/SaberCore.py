@@ -35,9 +35,17 @@ import lyricsgenius
 repo = git.Repo(".git")
 ARTISTS_BLACKLIST = ('face', 'фэйс', 'lida', 'rasa')
 
-env_path = pathlib.Path('./Config/token.env')
-load_dotenv(dotenv_path=env_path)
-BOT_TOKEN = os.getenv("TOKEN")
+IS_TOKEN_REVEALED = False
+
+
+def authorize(client):
+    global IS_TOKEN_REVEALED
+
+    if IS_TOKEN_REVEALED is False:
+        IS_TOKEN_REVEALED = True
+        load_dotenv(dotenv_path='./Config/token.env')
+        client.run(os.getenv("TOKEN"), bot=True, reconnect=True)
+
 
 ERROR_COLOR = 0xDD2E44
 SUCCESS_COLOR = 0x77B255

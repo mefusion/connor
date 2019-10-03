@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
-from Saber.SaberCore import *
+import traceback
+import sys
+from Saber.SaberCore import MAIN_LOGS_CHANNEL, ERROR_COLOR, BOT_IS_NO_PERMS_MSG_ENABLED, WARNING_COLOR, BOT_MAINTAINERS
 
 
 class ErrorHandler(commands.Cog):
@@ -29,41 +31,52 @@ class ErrorHandler(commands.Cog):
             if isinstance(error, ignored):
                 return
 
+        async def send_here(message):
+            await ctx.send(message)
+
+        async def send_here_no_perms():
+            if BOT_IS_NO_PERMS_MSG_ENABLED is True:
+                await ctx.send(f':lock: У вас нет доступа к команде `{ctx.command}`')
+            else:
+                return
+
         # ==== DISCORD PYTHON ERRORS ====
 
         if isinstance(error, commands.CommandNotFound):
-            return await ctx.send('Что это вообще за команда? Я такую не знаю :(')
+            return
 
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'Команда `{ctx.command}` отключена.')
 
         elif isinstance(error, commands.MissingPermissions):
-            if BOT_IS_NO_PERMS_MSG_ENABLED is True:
-                return await ctx.send(f':lock: У вас нет доступа к команде `{ctx.command}`')
-            else:
-                return
-
-        elif isinstance(error, commands.errors.NotOwner):
-            if BOT_IS_NO_PERMS_MSG_ENABLED is True:
-                return await ctx.send(f':lock: У вас нет доступа к команде `{ctx.command}`')
-            else:
-                return
-
-        elif isinstance(error, commands.BotMissingPermissions):
-            if ctx.command.qualified_name == "ban":
-                return await ctx.send(f":x: Мне недостатчно прав, чтобы это сделать.")
-
-        elif isinstance(error, commands.CheckFailure):
-            if BOT_IS_NO_PERMS_MSG_ENABLED is True:
-                return await ctx.send(f':lock: У вас нет доступа к команде `{ctx.command}`')
-            else:
-                return
+            return await send_here_no_perms()
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(embed=discord.Embed(
-                title=':warning: Операция прервана!', description='Вы пропустили какой-то важный параметр для команды!',
-                colour=WARNING_COLOR).set_footer(
-                text='Узнать подробнее о команде: %shelp %s' % (BOT_PREFIX, ctx.command)))
+            return await send_here(
+                ":warning: Вы пропустили какой-то важный аргумент.\n"
+                f"\N{SPIRAL NOTE PAD} Синтаксис команды: "
+                f"`{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"
+            )
+
+        elif isinstance(error, commands.BadArgument):
+            if ctx.command.qualified_name == 'xp':
+                return await ctx.send(embed=discord.Embed(
+                    title=':x: Произошла ошибка!',
+                    colour=ERROR_COLOR,
+                    description='Я не знаю такого пользователя.')
+                )
+
+            elif ctx.command.qualified_name == 'erole color':
+                return await send_here(":x: Неизвестная роль.")
+
+        elif isinstance(error, commands.errors.NotOwner):
+            return await send_here_no_perms()
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            return await ctx.send(f":x: Мне недостатчно прав, чтобы это сделать.")
+
+        elif isinstance(error, commands.CheckFailure):
+            return await send_here_no_perms()
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
@@ -81,15 +94,6 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, discord.Forbidden):
             return await ctx.send(":x: Мне недостаточно прав, чтобы выполнить это действие.")
 
-        # Обрвботчики для конкретных случаев
-        elif isinstance(error, commands.BadArgument):
-            if ctx.command.qualified_name == 'xp':
-                return await ctx.send(embed=discord.Embed(
-                    title=':x: Произошла ошибка!', colour=ERROR_COLOR, description='Я не знаю такого пользователя.'))
-
-            elif ctx.command.qualified_name == 'erole color':
-                return await ctx.send(embed=discord.Embed(colour=ERROR_COLOR, description=':x: Роль не найдена.'))
-
         # ==== COOLDOWN CHECKS ====
 
         elif isinstance(error, commands.CommandOnCooldown):
@@ -99,6 +103,7 @@ class ErrorHandler(commands.Cog):
             return await ctx.send(
                 f'Вы не можете использовать эту команду ещё **{round(error.retry_after, 2)}** секунд.')
 
+        # Я знаю, что это выглядит просто ужасно, но мне же как-то нужно получать ошибка в самом Discord...
         log_embed.add_field(name='Краткое описание', value=str(error), inline=False)
         log_embed.add_field(name='Сервер', value=f'{ctx.guild.name} (`{ctx.guild.id}`)')
         log_embed.add_field(name='Автор сообщения', value=f'{ctx.author} (`{ctx.author.id}`)')
