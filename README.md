@@ -7,6 +7,3 @@
 - Создание магазина
 - Менджмент опыта со стороны Администратора
 - Защита от добавления бота на сторонние серверы
-
-### Сервер Discord
-[![Discord](https://discordapp.com/api/guilds/612406451109101599/embed.png?style=banner2)](https://discord.gg/QM7mZ5V)
