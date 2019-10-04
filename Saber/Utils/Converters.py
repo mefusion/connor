@@ -11,6 +11,17 @@ def init(actual_bot):
     BOT = actual_bot
 
 
+class DiscordMessageURL:
+    def __init__(self, guild_id, channel_id, msg_id):
+        self.guild_id = guild_id
+        self.channel_id = channel_id
+        self.msg_id = msg_id
+        self.url = f"https://discordapp.com/channels/{guild_id}/{channel_id}/{msg_id}/"
+
+    def get_url(self):
+        return self.url
+
+
 class DiscordUser(Converter):
 
     def __init__(self, id_only=False) -> None:
@@ -55,6 +66,6 @@ class RangedInt(Converter):
             else:
                 return argument
 
-# The whole converter was taken from Gear Bot, because I'm bad. Huge thanks to Gear Bot's developers and contributors
-# Весь конвертер был взят из исходного кода Gear Bot, потому что я слишком глуп. Огомная благодарность всем разработчикам и контрибьюторам Gear Bot
+# The whole DiscordUser converter was taken from Gear Bot, because I'm bad. Huge thanks to Gear Bot's developers and contributors
+# Весь конвертер DiscordUser был взят из исходного кода Gear Bot, потому что я слишком глуп. Огомная благодарность всем разработчикам и контрибьюторам Gear Bot
 # Gear Bot Repository: https://github.com/gearbot/GearBot

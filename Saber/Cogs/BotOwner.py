@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from Saber.SaberCore import *
 from Saber.Utils.Logger import Log
+from Saber.Utils.Converters import DiscordMessageURL
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
@@ -29,14 +30,39 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
         del memInfo
         return await ctx.send(embed=embed)
 
-    @commands.command(name='repeat', aliases=('mimic', 'copy'), hidden=True)
-    @commands.is_owner()
+    @commands.group(name="message", aliases=("msg", "✉"))
     @commands.guild_only()
-    async def do_repeat(self, ctx, *, inp: str):
-        return await ctx.send(inp)
+    async def msg(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await ctx.send('Вы не указали субкоманду.')
+
+    @msg.command(name="repeat", aliases=('mimic', 'copy'))
+    async def msg_repeat(self, ctx, *, _input: str):
+        await ctx.send(_input)
+
+    @msg.command(name="edit")
+    async def msg_edit(self, ctx, channel_id: int, message_id: int, *, _input: str = None):
+        c = self.bot.get_channel(channel_id)
+
+        if c is None:
+            return await ctx.send(":x: Неизвестный канал.")
+
+        m = await c.fetch_message(message_id)
+
+        await m.edit(content=_input)
+
+        e = discord.Embed(
+            colour=SECONDARY_COLOR,
+            description="\N{OK HAND SIGN} Сообщение отредактировано."
+        ).add_field(
+            name=f"Просмотреть",
+            value=f"[Перейти по ссылке]({DiscordMessageURL(ctx.guild.id, channel_id, message_id).url})"
+        )
+
+        await ctx.send(embed=e)
+        del e
 
     @commands.command(name='restart')
-    @commands.is_owner()
     async def __restart_bot__(self, ctx):
         await ctx.send(':gear: Перезагрузка...')
         log = Log()
@@ -46,7 +72,6 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
         return await self.bot.close()
 
     @commands.command(name="pullv2", aliases=("update", "pull"))
-    @commands.is_owner()
     async def pullv2(self, ctx):
         pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
                                 stdout=subprocess.PIPE,
@@ -121,8 +146,9 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
         del stat
         return await ctx.send(":ok_hand: Статус успешно сброшен.")
 
-    @_status.command(name="set", brief=CMD_INFO['STATUS_SET'])
+    @_status.command(name="set")
     async def _status_set(self, ctx, stype, *, text):
+        """Изменение статуса"""
         if (stype == 'playing') or (stype == '1'):
             playing_now = discord.Activity(name=str(text), type=discord.ActivityType.playing)
         elif (stype == 'watching') or (stype == '2'):
@@ -145,8 +171,9 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
 
     # ==== GUILD COMMANDS ==== #
 
-    @commands.group(name='guild', brief='Манипуляции с серверами, где я есть')
+    @commands.group(name='guild')
     async def _guild(self, ctx):
+        """Манипуляции с серверами, где я есть"""
         if ctx.invoked_subcommand is None:
             return await ctx.send('Вы не указали субкоманду (`leave`, `list`)')
 
