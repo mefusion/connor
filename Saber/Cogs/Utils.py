@@ -17,7 +17,8 @@ class Utils(commands.Cog, name='Разное'):
     @commands.command(name="prefix")
     async def prefix_info(self, ctx):
         """Узнать префикс на этом сервере"""
-        await ctx.send(f"Текущий префикс: `{await what_prefix(ctx.guild.id)}`")
+        current_prefix = await what_prefix(ctx.guild.id)
+        await ctx.send(f"Текущий префикс: `{current_prefix}`")
 
     @commands.command(name="acknowledgments", aliases=("благодарности",))
     @commands.cooldown(1, 10, BucketType.user)
