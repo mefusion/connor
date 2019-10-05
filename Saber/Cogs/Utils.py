@@ -19,6 +19,7 @@ class Utils(commands.Cog, name='Разное'):
         """Узнать префикс на этом сервере"""
         current_prefix = await what_prefix(ctx.guild.id)
         await ctx.send(f"Текущий префикс: `{current_prefix}`")
+        del current_prefix
 
     @commands.command(name="acknowledgments", aliases=("благодарности",))
     @commands.cooldown(1, 10, BucketType.user)

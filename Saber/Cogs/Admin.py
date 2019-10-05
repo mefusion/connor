@@ -18,6 +18,7 @@ class Admin(commands.Cog, name='Админские'):
     async def guild_cfg(self, ctx):
         current_conf = await show_config(ctx.guild.id)
         await ctx.send(f"Текущая конфигурация сервера: ```json\n{current_conf}\n```")
+        del current_conf
 
     @commands.group(name="role-edit", aliases=("erole", "role_edit"))
     async def _erole(self, ctx):
