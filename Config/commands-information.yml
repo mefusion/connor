@@ -1,8 +1,0 @@
-COMMANDS:
-  USERINFO: Отображает информацию о пользователях Discord
-  BOTINFO: Информация о боте
-  HUG: Обнять кого-нибудь
-  PING: Pong!
-  STATUS: Манипуляция со статусом бота
-  STATUS_RESET: Сбросить статус
-  STATUS_SET: Задать статус

@@ -3,6 +3,7 @@ from discord.ext import commands
 from Saber.SaberCore import *
 from ..Utils.Converters import DiscordUser
 import datetime as dt
+from ..Utils.Configurator import what_prefix
 
 genius = lyricsgenius.Genius(GENIUS_API_KEY)
 genius.verbose = False
@@ -12,6 +13,11 @@ genius.remove_section_headers = True
 class Utils(commands.Cog, name='Разное'):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(name="prefix")
+    async def prefix_info(self, ctx):
+        """Узнать префикс на этом сервере"""
+        await ctx.send(f"Текущий префикс: `{await what_prefix(ctx.guild.id)}`")
 
     @commands.command(name="acknowledgments", aliases=("благодарности",))
     @commands.cooldown(1, 10, BucketType.user)
@@ -46,9 +52,10 @@ class Utils(commands.Cog, name='Разное'):
             colour=discord.Colour.blue(),
             description=f":heartbeat: HEARTBEAT: **{latency}мс** \n:incoming_envelope: REST: **{rest}мс**"))
 
-    @commands.command(name='botinfo', aliases=('about',), brief=CMD_INFO['BOTINFO'])
+    @commands.command(name='botinfo', aliases=('about',))
     @commands.cooldown(1, 15, BucketType.user)
     async def _botinfo(self, ctx):
+        """Получить информацию о боте"""
         uptime = int(time.time() - BOT_STARTED_AT)
         uptime = '{:02d} ч. {:02d} м. {:02d} с.'.format(uptime // 3600, (uptime % 3600 // 60), uptime % 60)
         short_sha = repo.git.rev_parse(repo.head.object.hexsha, short=7)
@@ -81,9 +88,10 @@ class Utils(commands.Cog, name='Разное'):
 
         del embed
 
-    @commands.command(name='userinfo', aliases=('info',), brief=CMD_INFO['USERINFO'])
+    @commands.command(name='userinfo', aliases=('info',))
     @commands.cooldown(1, 10, type=BucketType.user)
     async def _userinfo(self, ctx, user: DiscordUser = None):
+        """Получить информацию о пользователе Discord"""
         if user is None:
             user = member = ctx.author
             user = await self.bot.fetch_user(user.id)

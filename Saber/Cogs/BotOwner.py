@@ -132,13 +132,15 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
 
     # ==== STATuS COMMANDS ==== #
 
-    @commands.group(name="status", brief=CMD_INFO['STATUS'])
+    @commands.group(name="status")
     async def _status(self, ctx):
+        """Манипулирование со статусом бота"""
         if ctx.invoked_subcommand is None:
             return await ctx.send('Вы не указали субкоманду.')
 
-    @_status.command(name="reset", brief=CMD_INFO['STATUS_RESET'])
+    @_status.command(name="reset")
     async def _status_reset(self, ctx):
+        """Сбрасывает статус бота на статус по умолчанию"""
         stat = discord.Activity(name="Сбрасывание статуса...", type=discord.ActivityType.playing)
         await self.bot.change_presence(activity=stat)
         await asyncio.sleep(0.5)

@@ -41,8 +41,8 @@ async def what_prefix(guild_id):
     try:
         # Подключение файла конфигурации префиксов
         with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
-            prefixes = yaml.safe_load(prefixes_cfg)
-            return prefixes['PREFIX']
+            _prefixes_cfg = yaml.safe_load(prefixes_cfg)['PREFIX']
+            return _prefixes_cfg
     except Exception as err:
         raise err
 
@@ -76,15 +76,3 @@ try:
 except Exception as err:
     print(err)
 
-# Загрузка описаний команд
-try:
-    # Подключение файла конфигурации
-    __temp__ = open('./Config/commands-information.yml', 'r', encoding='utf-8')
-    # Загрузка данных из файла конфигурации
-    CMD_INFO = yaml.safe_load(__temp__)
-    CMD_INFO = CMD_INFO['COMMANDS']
-    # Удаление временных данных
-    __temp__.close()
-    del __temp__
-except Exception as err:
-    print(err)
