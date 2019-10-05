@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
 import Saber.SaberCore as Saber
-from Saber.Utils.Logger import Log
-from Saber.Utils.Sql.Functions.MainFunctionality import init_sql
+from Saber.Utils.Logger import OldLog
+import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 import Saber.Utils.ModLogs as ModLogs
+import Saber.Utils.Logger as Logger
 import errno
 import Saber.Utils.Converters as Converters
 import yaml
@@ -25,21 +26,22 @@ bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
 Converters.init(bot)
 ModLogs.init(bot)
+Logger.init(bot)
 
 
 @bot.event
 async def on_ready():
     # Инициализация БД
-    await init_sql()
+    await Postgres.initialize()
     print(f'[CORE] The bot is ready for duty!')
-    await Log(log_data=':wave: Я уже работаю!').send(bot, Saber.MAIN_LOGS_CHANNEL)
+    await OldLog(log_data=':wave: Я уже работаю!').send(bot, Saber.MAIN_LOGS_CHANNEL)
     await bot.change_presence(activity=Saber.DEFAULT_STATUS)
     return print(f'[CORE] Logged in as {bot.user.name}#{bot.user.discriminator}')
 
 
 @bot.event
 async def on_resumed():
-    await Log(log_data='\N{INFORMATION SOURCE} Соединение было потеряно и успешно восстановлено.').send(
+    await OldLog(log_data='\N{INFORMATION SOURCE} Соединение было потеряно и успешно восстановлено.').send(
         bot, Saber.MAIN_LOGS_CHANNEL)
     return print(f'[CORE] Connection resumed.')
 

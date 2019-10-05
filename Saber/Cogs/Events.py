@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from Saber.SaberCore import *
-from Saber.Utils.Logger import Log
+from Saber.Utils.Logger import OldLog
 from Saber.Utils.Configurator import get_whitelist
 
 command_attrs = {'hidden': True}
@@ -13,7 +13,7 @@ class Events(commands.Cog, name='События', command_attrs=command_attrs):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        log = Log()
+        log = OldLog()
 
         if guild.id not in await get_whitelist():
             log.type = 'warning'
@@ -32,7 +32,7 @@ class Events(commands.Cog, name='События', command_attrs=command_attrs):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        log = Log()
+        log = OldLog()
         log.type = 'error'
         log.data = ":outbox_tray: **Я покинул сервер.**\n\n"
         log.data += f"Сервер: **{guild.name}** (`{guild.id}`)\n"

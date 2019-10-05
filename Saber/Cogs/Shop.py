@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data
 from Saber.Utils.ShopGen import get_roles_shop_list
-from Saber.Utils.Logger import Log
+from Saber.Utils.Logger import OldLog
 
 
 class Shop(commands.Cog, name='Магазин'):
@@ -152,7 +152,7 @@ class Shop(commands.Cog, name='Магазин'):
                 LogData += f'**Покупатель:** {author} (`{author.id}`)\n'
                 LogData += f'**Покупка:** {rewardRole.mention} (`{rewardRole.id}`)\n'
                 LogData += f'**Стоимость:** {rewardPrice} опыта'
-                await Log(log_data=LogData, log_type='success').send(self.bot, XP_LOGS_CHANNEL)
+                await OldLog(log_data=LogData, log_type='success').send(self.bot, XP_LOGS_CHANNEL)
 
                 # Информируем
                 return await message.edit(embed=discord.Embed(

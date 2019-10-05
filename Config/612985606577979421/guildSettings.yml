@@ -7,6 +7,8 @@ LOGGING:
     CHANNEL: saber-mod-log
   MOD_LOGS:
     CHANNEL: saber-mod-log
+  XP_LOGS:
+    CHANNEL: saber-xp-log
 
 WELCOMER:
   ENABLED: true

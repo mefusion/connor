@@ -11,6 +11,14 @@ async def get_mod_log_channel(guild_id):
         raise err
 
 
+async def get_xp_log_channel(guild_id):
+    try:
+        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+            return yaml.safe_load(__temp_conf__)['LOGGING']['XP_LOGS']['CHANNEL']
+    except Exception as err:
+        raise err
+
+
 async def show_config(guild_id):
     try:
         with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
@@ -79,6 +87,9 @@ DEFAULT_CONFIG = {
 
         "MESSAGE_LOGS": {
             "CHANNEL": "saber-mod-log"
+        },
+        "XP_LOGS": {
+            "CHANNEL": "saber-xp-logs"
         }
     },
 

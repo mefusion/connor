@@ -7,3 +7,4 @@ lyricsgenius==1.7.0
 jishaku==1.16.1.147
 PyYAML==5.1.2
 psycopg2==2.8.3
+asyncpg==0.18.3

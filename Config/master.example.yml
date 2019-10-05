@@ -35,3 +35,9 @@ IGNORED_CHANNELS: # Названия каналов, которые будут �
   - 'commands'
   - 'keepers-commands'
   - 'play-this'
+
+DATABASE_INFO:
+  USER: postgres
+  DATABASE: saber
+  PASSWORD: 1234
+  HOST: localhost

@@ -4,6 +4,7 @@ import datetime
 from discord.ext import commands
 from Saber.SaberCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
 from Saber.Utils.Sql.Functions.MainFunctionality import *
+import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 
 
 class EventsLevels(commands.Cog, name='Уровни'):
@@ -39,16 +40,18 @@ class EventsLevels(commands.Cog, name='Уровни'):
         del role
 
         # Проверяем есть ли пользователь в таблице
-        user = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        # user = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        user = await Postgres.find_xp(msg.guild.id, member.id)
 
         if user is None:
-            await add_user(msg.guild.id, member.id)
+            # await add_user(msg.guild.id, member.id)
+            await Postgres.insert_into_db(msg.guild.id, member.id, 1)
             temp_embed.set_author(name=f":new: {msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
 
         triggered_at = int(time.time())
 
         # Получаем верменную метку, когда пользователь получал опыт
-        cooldown_stamp = int(await fetch_data(msg.guild.id, 'lastTimeEdited', 'user', member.id))
+        cooldown_stamp = await Postgres.find_cooldown(msg.guild.id, member.id)
 
         # Если прошло недостатоно времени (90 секунд) - отменяем процесс
         if triggered_at - cooldown_stamp < 90:
@@ -58,7 +61,8 @@ class EventsLevels(commands.Cog, name='Уровни'):
         temp_embed.set_author(name=f"{msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
 
         # Получаем текущий баланс
-        current_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        # current_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        current_xp = await Postgres.find_xp(msg.guild.id, member.id)
         temp_embed.add_field(name="Предыдущий баланс", value=current_xp)
 
         # Генерируем бонус очков опыта
@@ -66,15 +70,13 @@ class EventsLevels(commands.Cog, name='Уровни'):
         updated_xp = current_xp + bonus_xp
 
         # Добавляем очки опыта
-        await update_data(msg.guild.id, 'xp', updated_xp, 'user', member.id)
+        # await update_data(msg.guild.id, 'xp', updated_xp, 'user', member.id)
+        await Postgres.update_balance(msg.guild.id, member.id, updated_xp, triggered_at)
         temp_embed.add_field(name="Добавлено очков", value=bonus_xp)
         del bonus_xp, updated_xp, user
 
-        # Изменяем данные о том, когда менялся баланс
-        await update_data(msg.guild.id, 'lastTimeEdited', triggered_at, 'user', member.id)
-        del triggered_at
-
-        new_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        # new_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
+        new_xp = await Postgres.find_xp(msg.guild.id, member.id)
         temp_embed.add_field(name='Обновлённый баланс', value=new_xp)
         temp_embed.timestamp = datetime.datetime.utcnow()
         temp_embed.set_footer(text=f"{guild.name} ({guild.id})", icon_url=guild.icon_url)
