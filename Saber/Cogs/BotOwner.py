@@ -4,6 +4,21 @@ from Saber.SaberCore import *
 from ..Utils.Logger import Log
 from ..Utils.Converters import DiscordMessageURL
 from ..Utils.Configurator import get_whitelist
+import psycopg2
+
+connection_info = dict(
+    host="127.0.0.1",
+    db="saber",
+    user="postgres",
+    password="1234"
+)
+
+con = psycopg2.connect(
+    host=connection_info.get("host"),
+    database=connection_info.get("db"),
+    user=connection_info.get("user"),
+    password=connection_info.get("password")
+)
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
@@ -19,6 +34,29 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
         return content.strip('` \n')
+
+    @commands.command(name="postgres-test")
+    async def postgres_test(self, ctx, insertOrNot=None):
+        cur = con.cursor()
+
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS public.xp (guild_id bigint, user_id bigint, balance integer)")
+
+        con.commit()
+
+        if insertOrNot is not None:
+            cur.execute(
+                "INSERT INTO public.xp (guild_id, user_id, balance) VALUES(612406451109101599, 576322791129743361, 500);")
+            con.commit()
+
+        cur.execute("SELECT * FROM public.xp;")
+
+        rows = cur.fetchall()
+
+        await ctx.send(str(rows))
+
+        cur.close()
+        con.close()
 
     @commands.command(name="mem")
     async def _mem(self, ctx):
@@ -213,7 +251,7 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
         for guild_id in guilds_whitelist:
             guilds_formatted += f"- {guild_id}\n"
 
-        await ctx.send("```yaml\n"+guilds_formatted+"```")
+        await ctx.send("```yaml\n" + guilds_formatted + "```")
 
     # ==== COG COMMANDS ==== #
 
