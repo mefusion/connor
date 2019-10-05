@@ -1,8 +1,12 @@
 PREFIX: '>'
+
 WELCOMER:
   CHANNEL: 0
   ENABLED: false
   MESSAGE_LIVES: 20
 
-MOD_LOGS:
-  CHANNEL: saber-mod-log
+LOGGING:
+  MESSAGE_LOGS:
+    CHANNEL: saber-mod-log
+  MOD_LOGS:
+    CHANNEL: saber-mod-log

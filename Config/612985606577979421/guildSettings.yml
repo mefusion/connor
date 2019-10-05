@@ -2,8 +2,11 @@
 
 PREFIX: ">"
 
-MOD_LOGS:
-  CHANNEL: saber-mod-log
+LOGGING:
+  MESSAGE_LOGS:
+    CHANNEL: saber-mod-log
+  MOD_LOGS:
+    CHANNEL: saber-mod-log
 
 WELCOMER:
   ENABLED: true

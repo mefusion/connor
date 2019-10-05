@@ -51,30 +51,11 @@ async def on_guild_join(guild):
             print("[CORE] New guild, creating guildSetting.yml file...")
             os.makedirs(os.path.dirname(f'./Config/{guild.id}/guildSettings.yml'))
 
-            guildSettingsTemp = dict(
-
-                PREFIX=Saber.DEFAULT_PREFIX,
-
-                MOD_LOGS=dict(
-                    CHANNE=0
-                ),
-
-                WELCOMER=dict(
-                    ENABLED=False,
-                    CHANNEL=0,
-                    MESSAGE_LIVES=20,
-                    LOGGING=dict(
-                        MOD_ACTIONS=0
-                    )
-                )
-            )
-
             with open(f'./Config/{guild.id}/guildSettings.yml', 'w+', encoding='utf-8') as guildSettingsFile:
-                yaml.dump(guildSettingsTemp, guildSettingsFile)
+                yaml.dump(Saber.DEFAULT_CONFIG, guildSettingsFile)
 
-            del guildSettingsTemp
             print("[CORE] guildSettings.yml file was created!")
-        except OSError as exc:  # Guard against race condition
+        except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
         except Exception as generics:

@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from ..Utils.Converters import DiscordUser
-from Saber.SaberCore import BOT_MAINTAINERS
 from ..Utils.ModLogs import ModLog
 from ..Utils.Configurator import get_mod_log_channel
 
@@ -62,7 +61,7 @@ class Moderation(commands.Cog, name='Модерация'):
         await ctx.send(f":ok_hand: {target} кикнут: `{reason}`")
 
         message = await ModLog(ctx.guild).generate_message(
-            initiator=ctx.author.id, punished=target,
+            initiator=ctx.author.id, punished=target.id,
             reason=reason, action='kick'
         )
         await ModLog(ctx.guild).inform(await get_mod_log_channel(ctx.guild.id), message)

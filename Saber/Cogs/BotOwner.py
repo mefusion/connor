@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 from Saber.SaberCore import *
-from Saber.Utils.Logger import Log
-from Saber.Utils.Converters import DiscordMessageURL
-from Saber.Utils.Configurator import get_whitelist
+from ..Utils.Logger import Log
+from ..Utils.Converters import DiscordMessageURL
+from ..Utils.Configurator import get_whitelist
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
