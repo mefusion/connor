@@ -3,6 +3,7 @@ from discord.ext import commands
 import Saber.SaberCore as Saber
 from Saber.Utils.Logger import Log
 from Saber.Utils.Sql.Functions.MainFunctionality import init_sql
+import Saber.Utils.ModLogs as ModLogs
 import errno
 import Saber.Utils.Converters as Converters
 import yaml
@@ -23,6 +24,7 @@ async def get_prefix(client, message):
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
 Converters.init(bot)
+ModLogs.init(bot)
 
 
 @bot.event
@@ -37,7 +39,8 @@ async def on_ready():
 
 @bot.event
 async def on_resumed():
-    await Log(log_data='\N{INFORMATION SOURCE} Соединение было потеряно и успешно восстановлено.').send(bot, Saber.MAIN_LOGS_CHANNEL)
+    await Log(log_data='\N{INFORMATION SOURCE} Соединение было потеряно и успешно восстановлено.').send(
+        bot, Saber.MAIN_LOGS_CHANNEL)
     return print(f'[CORE] Connection resumed.')
 
 
@@ -51,6 +54,10 @@ async def on_guild_join(guild):
             guildSettingsTemp = dict(
 
                 PREFIX=Saber.DEFAULT_PREFIX,
+
+                MOD_LOGS=dict(
+                    CHANNE=0
+                ),
 
                 WELCOMER=dict(
                     ENABLED=False,

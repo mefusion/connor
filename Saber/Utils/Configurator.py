@@ -1,5 +1,51 @@
 import yaml
 import discord
+from discord.ext import commands
+
+
+async def get_mod_log_channel(guild_id):
+    try:
+        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+            mod_log_channel_name = yaml.safe_load(__temp_conf__)['MOD_LOGS']['CHANNEL']
+            return mod_log_channel_name
+    except Exception as err:
+        raise err
+
+
+async def show_config(guild_id):
+    try:
+        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+            settings = yaml.safe_load(__temp_conf__)
+            settings_temp = ""
+
+            for setting, parameters in settings.items():
+                settings_temp += f"{setting}: {parameters}\n\n"
+
+            settings = settings_temp
+            del settings_temp
+
+            return str(settings)
+    except Exception as err:
+        raise err
+
+
+async def get_whitelist():
+    try:
+        with open('./Config/master.yml', 'r', encoding='utf-8') as __temp_master__:
+            return tuple(yaml.safe_load(__temp_master__)['WHITELIST'])
+    except Exception as err:
+        raise err
+
+
+async def what_prefix(guild_id):
+    try:
+        # Подключение файла конфигурации префиксов
+        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
+            prefixes = yaml.safe_load(prefixes_cfg)
+            return prefixes['PREFIX']
+    except Exception as err:
+        raise err
+
 
 # Попытка получения конфигурации
 try:
@@ -8,8 +54,6 @@ try:
     # Загрузка данных из файла конфигурации
     master = yaml.safe_load(__temp__)
     cfg = master['CONFIG'.upper()]
-    # Получаем список серверов из белого списка и превращаем в кортеж
-    whitelist = tuple(master['WHITELIST'.upper()])
     # Получаем список игнорируемых каналов (не будет считаться уровень) и превращаем в кортеж
     IGNORED_CHANNELS = tuple(master['IGNORED_CHANNELS'])
     # Получаем список модулей, включаемых при загрузке и превращаем в кортеж
@@ -44,13 +88,3 @@ try:
     del __temp__
 except Exception as err:
     print(err)
-
-
-def find_prefixes(message):
-    try:
-        # Подключение файла конфигурации префиксов
-        with open(f'./Config/{message}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
-            prefixes = yaml.safe_load(prefixes_cfg)
-            return prefixes['PREFIX']
-    except Exception as err:
-        raise err

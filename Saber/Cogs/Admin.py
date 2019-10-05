@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
 from Saber.SaberCore import *
-from Saber.Utils.Logger import Log
-from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data, add_user, del_user, fetch_table
+from Saber.Utils.Configurator import show_config
 
 
 class Admin(commands.Cog, name='Админские'):
@@ -13,6 +12,11 @@ class Admin(commands.Cog, name='Админские'):
         return await ctx.bot.is_owner(ctx.author) or ctx.author.id in BOT_MAINTAINERS
 
     # ==== ROLES MANAGEMENT COMMANDS ==== #
+
+    @commands.command(name="guild-cfg")
+    @commands.has_permissions(manage_guild=True)
+    async def guild_cfg(self, ctx):
+        await ctx.send(f"Текущая конфигурация сервера: ```json\n{await show_config(ctx.guild.id)}\n```")
 
     @commands.group(name="role-edit", aliases=("erole", "role_edit"))
     async def _erole(self, ctx):

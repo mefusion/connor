@@ -3,6 +3,7 @@ from discord.ext import commands
 from Saber.SaberCore import *
 from Saber.Utils.Logger import Log
 from Saber.Utils.Converters import DiscordMessageURL
+from Saber.Utils.Configurator import get_whitelist
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):
@@ -201,6 +202,16 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
             log.data = ':x: **Ошибка!**\n\n'
             log.data += f'{str(err)}'
             return await log.send(self.bot)
+
+    @_guild.command(name="whitelist")
+    async def _guild_whitelist(self, ctx):
+        guilds_whitelist = await get_whitelist()
+        guilds_formatted = "# Белый список серверов:\n"
+
+        for guild_id in guilds_whitelist:
+            guilds_formatted += f"- {guild_id}\n"
+
+        await ctx.send("```yaml\n"+guilds_formatted+"```")
 
     # ==== COG COMMANDS ==== #
 

@@ -8,6 +8,7 @@ CONFIG:
   SHOW_NO_PERMS_MESSAGES: true # отобржвть сообщения о недостатке прав или нет (true / false)
   GIPHY_API_KEY: abcdefg12345 # ключ API GIPHY
   GENIUS_API_KEY: asdajks12jkh4kjh # ключ GENIUS API
+  DEFAULT_MOD_LOG: saber-mod-log # необходимо для логирования наказаний
 
 WHITELIST:
   - 612406451109101599 # The Library

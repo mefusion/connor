@@ -2,6 +2,9 @@
 
 PREFIX: "?"
 
+MOD_LOGS:
+  CHANNEL: saber-mod-log
+
 WELCOMER:
   ENABLED: true
   CHANNEL: 612406451863945257
