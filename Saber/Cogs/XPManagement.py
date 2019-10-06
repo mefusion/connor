@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
-from Saber.SaberCore import *
 from Saber.Utils.Logger import OldLog, Log
 from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data, add_user, del_user, fetch_table
 import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+from ..Utils.Configurator import *
 
 
 class XPManagement(commands.Cog, name="Управление XP"):
@@ -29,11 +29,11 @@ class XPManagement(commands.Cog, name="Управление XP"):
         if guild_id in self.thisWords:
             guild_id = ctx.guild.id
         elif guild_id is None:
-            return await message.edit(content="Параметр `guild` является обязательным")
+            return await message.edit(content="Параметр `guild` является обязательным.")
         elif user is None:
-            return await message.edit(content="Параметр `user` является обязательным")
+            return await message.edit(content="Параметр `user` является обязательным.")
         elif adding_to_xp is None:
-            return await message.edit(content="Параметр `adding_to_xp` является обязательным")
+            return await message.edit(content="Параметр `adding_to_xp` является обязательным.")
 
         # Проверка, если указан сам бот
         if user is self.bot.user:
@@ -43,6 +43,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
         elif user.bot is True:
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
+        # Получаем текущий баланс юзера
         balance = await Postgres.find_xp(guild_id, user.id)
 
         if balance is None:
@@ -59,31 +60,27 @@ class XPManagement(commands.Cog, name="Управление XP"):
         guildObj = self.bot.get_guild(guild_id)
 
         new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
-        await message.edit(content=f"Изменёл баланс для {user} (`{user.id}`):\n"
-                                   f"Предыдущий баланс: {balance}\n"
-                                   f"Новый баланс: {new_balance}\n"
-                                   f"Добавлено опыта: {new_balance - balance}")
+        await message.edit(content=f"\N{OK HAND SIGN} Баланс **{user}** успешно установлен на `{new_balance}` единиц опыта.")
 
         # Логируем
         log = Log(guildObj.id)
         log_text = await log.generate_log_data(
             _type='admin',
-            text=f"**{ctx.author}** (`{ctx.author.id}`) изменил баланс юзеру **{user}** (`{user.id}`) на `{new_balance}` единиц опыта."
+            text=f"**{ctx.author}** (`{ctx.author.id}`) установил баланс юзеру **{user}** (`{user.id}`) на `{new_balance}` единиц опыта."
         )
         await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
 
-    # TODO: Повторить методы из верхнего метода (лол)
     @_managexp.command(name='set')
-    async def _managexp_set(self, ctx, guild=None, user: discord.User = None, set_xp_to=None):
+    async def _managexp_set(self, ctx, guild_id=None, user: discord.User = None, set_xp_to=None):
         message = await ctx.send(':repeat: Выполняю...')
-        if guild in self.thisWords:
-            guild = ctx.guild.id
-        elif guild is None:
-            return await message.edit(content="Параметр `guild` является обязательным")
+        if guild_id in self.thisWords:
+            guild_id = ctx.guild.id
+        elif guild_id is None:
+            return await message.edit(content="Параметр `guild` является обязательным.")
         elif user is None:
-            return await message.edit(content="Параметр `user` является обязательным")
+            return await message.edit(content="Параметр `user` является обязательным.")
         elif set_xp_to is None:
-            return await message.edit(content="Параметр `set_xp_to` является обязательным")
+            return await message.edit(content="Параметр `set_xp_to` является обязательным.")
 
         # Проверка, если указан сам бот
         if user is self.bot.user:
@@ -93,11 +90,11 @@ class XPManagement(commands.Cog, name="Управление XP"):
         elif user.bot is True:
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
-        # Получаем текущий баланс пользователя, None - если нет в БД
-        current_xp = await fetch_data(guild, 'xp', 'user', user.id)
+        # Получаем текущий баланс юзера
+        balance = await Postgres.find_xp(guild_id, user.id)
 
         # Отмена операции, если указаноого пользователя нет в БД
-        if current_xp is None:
+        if balance is None:
             return await message.edit(content=f':x: Этого пользователя нет в базе данных, изменить баланс невозможно.')
 
         # Превращаем значение аргумента в целочисленное значение
@@ -112,32 +109,35 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content=f':x: Вы пытаетесь дать больше 350 тыс. очков опыта, так нельзя.')
 
         # Применяем изменения, если проверки пройдены успешно
-        await update_data(guild, 'xp', set_xp_to, 'user', user.id)
+        await Postgres.update_balance(guild_id, user.id, set_xp_to)
+        guildObj = self.bot.get_guild(guild_id)
+        new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
 
-        guildObj = self.bot.get_guild(guild)
+        await message.edit(
+            content=f'\N{OK HAND SIGN} Баланс {str(user)} успешно установлен на `{str(new_balance)}` единиц опыта.'
+        )
 
         # Логируем
-        Log_Data = f':gear: **Админское изменение баланса**\n'
-        Log_Data += f":file_cabinet: **Сервер:** {guildObj.name} (`{guildObj.id}`)\n\n"
-        Log_Data += f'Администратор **{ctx.author}** (`{ctx.author.id}`) изменил баланс ' \
-                    f'пользователя **{user}** (`{user.id}`) на **{set_xp_to} опыта**.'
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) установил баланс юзеру **{user}** (`{user.id}`) на `{new_balance}` единиц опыта."
+        )
 
-        await OldLog(log_data=Log_Data).send(self.bot, XP_LOGS_CHANNEL)
-
-        # Сообщаем об изменениях
-        return await message.edit(
-            content=f':ok_hand: Вы успешно изменили баланс пользователю {str(user)} (`{user.id}`)')
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
 
     @_managexp.command(name='reset')
-    async def _managexp_reset(self, ctx, guild=None, user: discord.User = None):
+    async def _managexp_reset(self, ctx, guild=None, user: discord.User = None, *, reason=None):
         message = await ctx.send(':repeat: Выполняю...')
-
         if guild in self.thisWords:
             guild = ctx.guild.id
         elif guild is None:
-            return await message.edit(content="Параметр `guild` является обязательным")
+            return await message.edit(content="Параметр `guild` является обязательным.")
         elif user is None:
-            return await message.edit(content="Параметр `user` является обязательным")
+            return await message.edit(content="Параметр `user` является обязательным.")
+
+        if reason is None:
+            reason = "Причина не указана."
 
         # Проверка, если указан сам бот
         if user is self.bot.user:
@@ -148,7 +148,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        current_xp = await fetch_data(guild, 'xp', 'user', user.id)
+        current_xp = await Postgres.find_xp(guild, user.id)
 
         # Отмена операции, если указаноого пользователя нет в БД
         if current_xp is None:
@@ -157,27 +157,33 @@ class XPManagement(commands.Cog, name="Управление XP"):
         # Рофлан-провека
         if int(current_xp) <= 1:
             return await message.edit(
-                content=f':thinking: Вы и правда хотите сбросить баланс человеку, у которого на счету нет очков опыта? ')
+                content=f':thinking: Вы и правда хотите сбросить баланс человеку, у которого на счету нет очков опыта?')
 
         # Превращаем значение аргумента в целочисленное значение
         set_xp_to = 0
 
         # Применяем изменения, если проверки пройдены успешно
-        await update_data(guild, 'xp', set_xp_to, 'user', user.id)
+        await Postgres.update_balance(guild, user.id, set_xp_to)
+        guildObj = self.bot.get_guild(guild)
+        new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
+
+        if new_balance >= 0:
+            await message.edit(
+                content=f':ok_hand: Баланс пользователя **{str(user)}** сброшен: `{reason}`'
+            )
+        else:
+            await message.edit(
+                content=f':x: Что-то пошло не так...'
+            )
 
         # Логируем
-        guildObj = self.bot.get_guild(guild)
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) сбросил баланс юзеру **{user}** (`{user.id}`): `{reason}`"
+        )
 
-        Log_Data = f':gear: **Админское изменение баланса**\n'
-        Log_Data += f":file_cabinet: **Сервер:** {guildObj.name} (`{guildObj.id}`)\n\n"
-        Log_Data += f'Администратор **{ctx.author}** (`{ctx.author.id}`) сбросил баланс ' \
-                    f'пользователя **{user}** (`{user.id}`) на **{set_xp_to} опыта**.'
-
-        await OldLog(log_data=Log_Data, log_type='warning').send(self.bot, XP_LOGS_CHANNEL)
-
-        # Сообщаем об изменениях
-        return await message.edit(
-            content=f':ok_hand: Вы успешно сбросили баланс пользователю {str(user)} (`{user.id}`)')
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
 
     @_managexp.command(name='add_user', aliases=('force_add_user',))
     @commands.is_owner()
@@ -187,9 +193,9 @@ class XPManagement(commands.Cog, name="Управление XP"):
         if guild in self.thisWords:
             guild = ctx.guild.id
         elif guild is None:
-            return await message.edit(content="Параметр `guild` обязателен")
+            return await message.edit(content="Параметр `guild` обязателен.")
         elif user is None:
-            return await message.edit(content="Параметр `user` обязателен")
+            return await message.edit(content="Параметр `user` обязателен.")
 
         # Проверяем, если пользователь вообще был указан
         if user is None:
@@ -204,27 +210,26 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await fetch_data(guild, 'user', 'user', user.id)
+        user_object = await Postgres.find_xp(guild, user.id)
 
         # Отмена операции, если указанный пользователь есть в БД
         if user_object is not None:
-            return await message.edit(content=f':x: Этот пользователь уже присутствует в базе данных.')
+            return await message.edit(content=f':x: Этот пользователь уже существует в базе данных.')
 
         # Добавляем пользователя в базу
-        await add_user(guild, user.id)
+        await Postgres.insert_into_db(guild, user.id, 0)
+        await message.edit(content=f"\N{OK HAND SIGN} **{user}** успешно внесён в базу данных сервера `{guild}`.")
 
         # Логируем
         guildObj = self.bot.get_guild(guild)
 
-        Log_Data = f':gear: **Пользователи**\n'
-        Log_Data += f":file_cabinet: **Сервер:** {guildObj.name} (`{guildObj.id}`)\n\n"
-        Log_Data += f'Администратор **{ctx.author}** (`{ctx.author.id}`) принудительно добавляет пользователя '
-        Log_Data += f'**{user}** (`{user.id}`) в базу данных.'
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) внёс юзера **{user}** (`{user.id}`) в базу данных."
+        )
 
-        await OldLog(log_data=Log_Data, log_type='warning').send(self.bot, XP_LOGS_CHANNEL)
-
-        return await message.edit(
-            content=f':ok_hand: Вы успешно внесли пользователя **{user}** (`{user.id}`) в базу данных.')
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
 
     @_managexp.command(name='del_user')
     @commands.is_owner()
@@ -234,9 +239,9 @@ class XPManagement(commands.Cog, name="Управление XP"):
         if guild in self.thisWords:
             guild = ctx.guild.id
         elif guild is None:
-            return await message.edit(content="Параметр `guild` обязателен")
+            return await message.edit(content="Параметр `guild` обязателен.")
         elif user is None:
-            return await message.edit(content="Параметр `user` обязателен")
+            return await message.edit(content="Параметр `user` обязателен.")
 
         # Проверяем, если пользователь вообще был указан
         if user is None:
@@ -251,67 +256,32 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await fetch_data(guild, 'user', 'user', user.id)
+        user_object = await Postgres.find_xp(guild, user.id)
 
         # Отмена операции, если указанный пользователь есть в БД
         if user_object is None:
             return await message.edit(content=f':x: Этого пользовател и так нет в базе данных.')
 
         # Удаляем пользователя из базы данных
-        await del_user(guild, user.id)
+        await Postgres.delete_from_db(guild, user.id)
 
         # Логируем
         guildObj = self.bot.get_guild(guild)
 
-        Log_Data = f':gear: **Пользователи**\n'
-        Log_Data += f":file_cabinet: **Сервер:** {guildObj.name} (`{guildObj.id}`)\n\n"
-        Log_Data += f'Администратор **{ctx.author}** (`{ctx.author.id}`) удаляет пользователя '
-        Log_Data += f'**{user}** (`{user.id}`) из базы данных.'
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) удалил юзера **{user}** (`{user.id}`) из базы данных."
+        )
 
-        await OldLog(log_data=Log_Data, log_type='warning').send(self.bot, XP_LOGS_CHANNEL)
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
+        await message.edit(content=f"\N{OK HAND SIGN} **{user}** успешно удалён из базы данных сервера `{guild}`.")
 
-        return await message.edit(
-            content=f':wastebasket: Вы успешно удалили пользователя **{user}** (`{user.id}`) из базы данных.')
-
-    # THIS DOESNT WORK //TODO
+    # TODO
     @_managexp.command(name='force_del_user', enabled=False)
     @commands.is_owner()
-    async def _managexp_force_del_user(self, ctx, guild=None, user=None):
-        message = await ctx.send(':repeat: Выполняю...')
-
-        if guild in self.thisWords:
-            guild = ctx.guild.id
-        elif guild is None:
-            return await message.edit(content="Параметр `guild` обязателен")
-        elif user is None:
-            return await message.edit(content="Параметр `user` обязателен")
-
-        # Проверяем, если пользователь вообще был указан
-        if user is None:
-            return await message.edit(content='Вы не указали ID пользователя.')
-
-        # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await fetch_data(guild, 'user', 'user', user)
-
-        # Отмена операции, если указанный пользователь есть в БД
-        if user_object is None:
-            return await message.edit(content=f':x: Этого пользовател и так нет в базе данных.')
-
-        # Удаляем пользователя из базы данных
-        await del_user(guild, user)
-
-        # Логируем
-        guildObj = self.bot.get_guild(guild)
-
-        Log_Data = f':gear: **Пользователи**\n'
-        Log_Data += f":file_cabinet: **Сервер:** {guildObj.name} (`{guildObj.id}`)\n\n"
-        Log_Data += f'Администратор **{ctx.author}** (`{ctx.author.id}`) принудительно удаляет '
-        Log_Data += f'пользователя **{user}** из базы данных.'
-
-        await OldLog(log_data=Log_Data, log_type='warning').send(self.bot, XP_LOGS_CHANNEL)
-
-        return await message.edit(
-            content=f':wastebasket: Вы успешно удалили пользователя **{user}** из базы данных.')
+    async def _managexp_force_del_user(self, ctx):
+        await ctx.send("//TODO!")
 
 
 def setup(bot):

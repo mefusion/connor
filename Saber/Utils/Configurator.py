@@ -1,6 +1,5 @@
 import yaml
 import discord
-from discord.ext import commands
 
 
 async def get_mod_log_channel(guild_id):

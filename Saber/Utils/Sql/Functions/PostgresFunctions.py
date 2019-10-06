@@ -37,7 +37,8 @@ async def initialize():
 
 async def find_xp(guild_id, user_id):
     con = await do_connect()
-    row = await con.fetchrow(f"SELECT balance FROM public.xp WHERE user_id={user_id} AND guild_id={guild_id};")
+    row = await con.fetchrow(
+        f"SELECT balance FROM public.xp WHERE user_id={str(user_id)} AND guild_id={str(guild_id)};")
     await do_close(con)
 
     if row is None:
@@ -48,7 +49,8 @@ async def find_xp(guild_id, user_id):
 
 async def find_cooldown(guild_id, user_id):
     con = await do_connect()
-    row = await con.fetchrow(f"SELECT last_time_edited FROM public.xp WHERE user_id={user_id} AND guild_id={guild_id};")
+    row = await con.fetchrow(
+        f"SELECT last_time_edited FROM public.xp WHERE user_id={str(user_id)} AND guild_id={str(guild_id)};")
     await do_close(con)
 
     if row is None:
@@ -75,7 +77,7 @@ async def update_balance(guild_id, user_id, new_bal, timestamp=None):
 async def find_top_5(guild_id):
     con = await do_connect()
     row = await con.fetch(
-        f"SELECT balance, user_id FROM public.xp WHERE guild_id={guild_id} ORDER BY balance DESC LIMIT 5;")
+        f"SELECT balance, user_id FROM public.xp WHERE guild_id={str(guild_id)} ORDER BY balance DESC LIMIT 5;")
     await do_close(con)
     return row
 
@@ -86,9 +88,15 @@ async def insert_into_db(guild_id, user_id, balance, timestamp=None):
 
     if timestamp is None:
         await con.execute(
-            f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({guild_id}, {user_id}, {balance}, {triggered_at - 500});")
+            f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({str(guild_id)}, {str(user_id)}, {str(balance)}, {triggered_at - 500});")
     else:
         await con.execute(
-            f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({guild_id}, {user_id}, {balance}, {triggered_at});")
+            f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({str(guild_id)}, {str(user_id)}, {str(balance)}, {triggered_at});")
 
+    await do_close(con)
+
+
+async def delete_from_db(guild_id, user_id):
+    con = await do_connect()
+    await con.execute(f"DELETE FROM public.xp WHERE (user_id={str(user_id)} AND guild_id={str(guild_id)});")
     await do_close(con)
