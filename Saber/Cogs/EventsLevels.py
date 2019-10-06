@@ -1,11 +1,10 @@
 import discord
 import random
-import datetime
+import time
 from discord.ext import commands
 from Saber.SaberCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
-from Saber.Utils.Sql.Functions.MainFunctionality import *
 import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
-from ..Utils.Configurator import get_xp_log_channel
+from ..Utils.Configurator import get_xp_log_channel, what_prefix
 from ..Utils.Logger import Log
 
 
@@ -22,7 +21,7 @@ class EventsLevels(commands.Cog, name='Уровни'):
 
         if guild is None:
             return
-        if msg.content.startswith(BOT_PREFIX):
+        if msg.content.startswith(await what_prefix(msg.guild.id)) or msg.content.startswith(self.bot.user.mention):
             return
         if member.id == self.bot.user.id:
             return
@@ -45,7 +44,7 @@ class EventsLevels(commands.Cog, name='Уровни'):
         user = await Postgres.find_xp(msg.guild.id, member.id)
 
         if user is None:
-            await Postgres.insert_into_db(msg.guild.id, member.id, 1)
+            await Postgres.insert_into_db(msg.guild.id, member.id, 0)
             temp_embed.set_author(name=f":new: {msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
 
         triggered_at = int(time.time())
@@ -53,8 +52,8 @@ class EventsLevels(commands.Cog, name='Уровни'):
         # Получаем верменную метку, когда пользователь получал опыт
         cooldown_stamp = await Postgres.find_cooldown(msg.guild.id, member.id)
 
-        # Если прошло недостатоно времени (90 секунд) - отменяем процесс
-        if triggered_at - cooldown_stamp < 90:
+        # Если прошло недостатоно времени (75 секунд) - отменяем процесс
+        if triggered_at - cooldown_stamp < 75:
             return
 
         # Получаем текущий баланс

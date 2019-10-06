@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from Saber.Utils.Logger import OldLog, Log
-from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, update_data, add_user, del_user, fetch_table
+from Saber.Utils.Logger import Log
 import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 from ..Utils.Configurator import *
 

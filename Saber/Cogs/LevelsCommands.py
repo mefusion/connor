@@ -1,7 +1,6 @@
 from Saber.SaberCore import *
 import discord
 from discord.ext import commands
-from Saber.Utils.Sql.Functions.MainFunctionality import fetch_data, fetch_top5
 import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 from ..Utils.Converters import DiscordUser
 

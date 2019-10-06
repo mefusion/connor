@@ -1,4 +1,3 @@
-import discord
 from Saber.SaberCore import SECONDARY_COLOR, WARNING_COLOR, ERROR_COLOR, DEFAULT_COLOR, SUCCESS_COLOR, MAIN_LOGS_CHANNEL
 import datetime
 import discord

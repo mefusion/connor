@@ -4,7 +4,6 @@ from Saber.SaberCore import *
 from ..Utils.Logger import OldLog
 from ..Utils.Converters import DiscordMessageURL
 from ..Utils.Configurator import get_whitelist
-import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 
 
 class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dict(hidden=True)):

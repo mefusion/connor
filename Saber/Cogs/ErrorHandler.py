@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import traceback
 import sys
-from Saber.SaberCore import MAIN_LOGS_CHANNEL, ERROR_COLOR, BOT_IS_NO_PERMS_MSG_ENABLED, WARNING_COLOR, BOT_MAINTAINERS
+from Saber.SaberCore import MAIN_LOGS_CHANNEL, ERROR_COLOR, BOT_IS_NO_PERMS_MSG_ENABLED, BOT_MAINTAINERS
 
 
 class ErrorHandler(commands.Cog):
