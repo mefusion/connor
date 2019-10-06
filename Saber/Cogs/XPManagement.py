@@ -11,7 +11,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
         self.bot = bot
         self._last_result = None
         self.sessions = set()
-        self.thisWords = ("this", "current", "here")
+        self.thisWords = ("this", "current", "here", "same", "здесь", "тут")
 
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
@@ -64,15 +64,13 @@ class XPManagement(commands.Cog, name="Управление XP"):
                                    f"Новый баланс: {new_balance}\n"
                                    f"Добавлено опыта: {new_balance - balance}")
 
-        # Методы логирования
-        logObj = Log(guildObj.id)
-
-        log_msg = await logObj.generate_log_data(
-            _type='info',
-            text=f"**{ctx.author}** (`{ctx.author.id}`) изменил баланс юзеру {user} (`{user.id}`) на `{new_balance}` единиц опыта."
+        # Логируем
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) изменил баланс юзеру **{user}** (`{user.id}`) на `{new_balance}` единиц опыта."
         )
-
-        await logObj.log_to(await get_xp_log_channel(guildObj.id), log_msg)
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
 
     # TODO: Повторить методы из верхнего метода (лол)
     @_managexp.command(name='set')

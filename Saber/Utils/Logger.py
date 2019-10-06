@@ -80,6 +80,10 @@ class Log:
             self.type = 'xp'
             emote = "\N{MONEY BAG}"
 
+        elif _type == 'manage' or _type == 'admin':
+            self.type = 'manage'
+            emote = "\N{HAMMER AND PICK}"
+
         else:
             self.type = 'info'
             emote = "\N{INFORMATION SOURCE}"
