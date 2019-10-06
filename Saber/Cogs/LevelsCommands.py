@@ -14,7 +14,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
                       brief='Топ пользователей по количеству опыта на счету')
     @commands.cooldown(1, 20, type=BucketType.user)
     async def _leaders(self, ctx):
-        msg = await ctx.send("Выполняю...")
+        msg = await ctx.send("Открываю секретную книжку с записями...")
         data = await Postgres.find_top_5(ctx.guild.id)
 
         embed = discord.Embed(colour=SECONDARY_COLOR, title=f'ТОП-{len(data)} ЛИДЕРОВ')

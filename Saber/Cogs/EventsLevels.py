@@ -5,6 +5,8 @@ from discord.ext import commands
 from Saber.SaberCore import BOT_PREFIX, IGNORED_CHANNELS, XP_LOGS_CHANNEL, SECONDARY_COLOR
 from Saber.Utils.Sql.Functions.MainFunctionality import *
 import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+from ..Utils.Configurator import get_xp_log_channel
+from ..Utils.Logger import Log
 
 
 class EventsLevels(commands.Cog, name='Уровни'):
@@ -40,11 +42,9 @@ class EventsLevels(commands.Cog, name='Уровни'):
         del role
 
         # Проверяем есть ли пользователь в таблице
-        # user = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
         user = await Postgres.find_xp(msg.guild.id, member.id)
 
         if user is None:
-            # await add_user(msg.guild.id, member.id)
             await Postgres.insert_into_db(msg.guild.id, member.id, 1)
             temp_embed.set_author(name=f":new: {msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
 
@@ -57,34 +57,24 @@ class EventsLevels(commands.Cog, name='Уровни'):
         if triggered_at - cooldown_stamp < 90:
             return
 
-        log_chan = self.bot.get_channel(XP_LOGS_CHANNEL)
-        temp_embed.set_author(name=f"{msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
-
         # Получаем текущий баланс
-        # current_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
         current_xp = await Postgres.find_xp(msg.guild.id, member.id)
-        temp_embed.add_field(name="Предыдущий баланс", value=current_xp)
 
         # Генерируем бонус очков опыта
         bonus_xp = random.randint(2, 5)
         updated_xp = current_xp + bonus_xp
 
         # Добавляем очки опыта
-        # await update_data(msg.guild.id, 'xp', updated_xp, 'user', member.id)
         await Postgres.update_balance(msg.guild.id, member.id, updated_xp, triggered_at)
-        temp_embed.add_field(name="Добавлено очков", value=bonus_xp)
-        del bonus_xp, updated_xp, user
-
-        # new_xp = await fetch_data(msg.guild.id, 'xp', 'user', member.id)
         new_xp = await Postgres.find_xp(msg.guild.id, member.id)
-        temp_embed.add_field(name='Обновлённый баланс', value=new_xp)
-        temp_embed.timestamp = datetime.datetime.utcnow()
-        temp_embed.set_footer(text=f"{guild.name} ({guild.id})", icon_url=guild.icon_url)
 
-        log_chan = self.bot.get_channel(XP_LOGS_CHANNEL)
-        await log_chan.send(embed=temp_embed)
+        # Логируем
+        log = Log(msg.guild.id)
+        log_text = await log.generate_log_data(_type='xp', text=f"**{member}** (`{member.id}`) получил `{bonus_xp}` единиц опыта, новый баланс: `{new_xp}`")
+        await log.log_to(channel=(await get_xp_log_channel(msg.guild.id)), text=log_text)
 
-        del temp_embed
+        # Возможно, это то ещё плацебо лол
+        del new_xp, bonus_xp, updated_xp, user, current_xp, triggered_at, log
 
 
 def setup(bot):
