@@ -1,3 +1,5 @@
+# TODO: Перенос класса в Logger.py
+
 import discord
 from discord.ext import commands
 import datetime as dt

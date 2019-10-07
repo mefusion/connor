@@ -3,6 +3,7 @@ from discord.ext import commands
 import traceback
 import sys
 from Saber.SaberCore import MAIN_LOGS_CHANNEL, ERROR_COLOR, BOT_IS_NO_PERMS_MSG_ENABLED, BOT_MAINTAINERS
+from Saber.Utils.CustomErrors import SaberErrors
 
 
 class ErrorHandler(commands.Cog):
@@ -94,6 +95,10 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, discord.Forbidden):
             return await ctx.send(":x: Мне недостаточно прав, чтобы выполнить это действие.")
 
+        elif isinstance(error, SaberErrors.BadGuildConfiguration):
+            if ctx.command.qualified_name == 'shop roles' or ctx.command.qualified_name == 'shop things':
+                return await ctx.send(f":x: Проблема с конфигурацией. ```ERROR: {str(error)}```")
+
         # ==== COOLDOWN CHECKS ====
 
         elif isinstance(error, commands.CommandOnCooldown):
@@ -104,9 +109,10 @@ class ErrorHandler(commands.Cog):
                 f'Вы не можете использовать эту команду ещё **{round(error.retry_after, 2)}** секунд.')
 
         # Я знаю, что это выглядит просто ужасно, но мне же как-то нужно получать ошибка в самом Discord...
-        log_embed.add_field(name='Краткое описание', value=str(error), inline=False)
-        log_embed.add_field(name='Сервер', value=f'{ctx.guild.name} (`{ctx.guild.id}`)')
-        log_embed.add_field(name='Автор сообщения', value=f'{ctx.author} (`{ctx.author.id}`)')
+        # TODO: Переписать логирование незарегисрированных ошибок
+        log_embed.add_field(name='Краткое описание', value=f':x: {str(error)}', inline=False)
+        log_embed.add_field(name='Сервер', value=f'{ctx.guild.name} (`{ctx.guild.id}`)', inline=False)
+        log_embed.add_field(name='Автор сообщения', value=f'{ctx.author} (`{ctx.author.id}`)', inline=False)
         await log.send(embed=log_embed)
         log_embed.clear_fields()
         await ctx.send(':x: Произошла непредвиденная ошибка, разработчик уже знает о ней.')

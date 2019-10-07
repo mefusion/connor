@@ -7,6 +7,7 @@ import Saber.Utils.ModLogs as ModLogs
 import Saber.Utils.Logger as Logger
 import errno
 import Saber.Utils.Converters as Converters
+import Saber.Utils.ShopGen as Shop
 import yaml
 import os
 import traceback
@@ -24,9 +25,11 @@ async def get_prefix(client, message):
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
+# Инициализация ютилек, требующих клиент бота
 Converters.init(bot)
 ModLogs.init(bot)
 Logger.init(bot)
+Shop.init(bot)
 
 
 @bot.event
