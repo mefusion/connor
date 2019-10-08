@@ -1,8 +1,6 @@
-from Saber.Utils.Sql.Functions.PostgresFunctions import *
 from Saber.Utils.CustomErrors import SaberErrors
 import yaml
 from discord import Embed
-from Saber.SaberCore import SECONDARY_COLOR
 from Saber.Utils.Configurator import what_prefix
 
 BOT = None
@@ -46,5 +44,3 @@ async def generate_roles_shop(guild_id):
 
     del guild, roles
     return e
-
-# TODO: Создать методы для покупок ролей

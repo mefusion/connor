@@ -1,8 +1,10 @@
 import discord
+import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
 from discord.ext import commands
 from discord.ext.commands import BucketType
 from Saber.SaberCore import BOT_PREFIX
 from Saber.Utils.ShopGen import *
+from Saber.SaberCore import SECONDARY_COLOR, ERROR_COLOR
 
 
 class Shop(commands.Cog, name='Магазин'):
@@ -29,8 +31,7 @@ class Shop(commands.Cog, name='Магазин'):
     async def _shop_things(self, ctx):
         return await ctx.send('На данный момент в этом отделе пусто.')
 
-    # TODO: Методы для валидации покупки
-    @_shop.group(name="buy", enabled=False)
+    @_shop.group(name="buy")
     @commands.guild_only()
     @commands.cooldown(1, 25, BucketType.user)
     async def _shop_buy(self, ctx):
@@ -38,11 +39,52 @@ class Shop(commands.Cog, name='Магазин'):
             return await ctx.send(
                 f'Укажите категорию магазина (`roles` или `things`)')
 
-    @_shop_buy.command(name="roles", enabled=False)
+    # TODO: Нужно закончить, добавить проверку наличия предыдущей роли
+    @_shop_buy.command(name="roles")
     @commands.guild_only()
     @commands.cooldown(1, 25, BucketType.user)
     async def _shop_buy_roles(self, ctx, itemId=None):
-        return await ctx.send("Naaah")
+        if itemId is None:
+            return await ctx.send(":x: Вы не указали номер товара!")
+
+        try:
+            itemId = int(itemId)
+        except ValueError:
+            return await ctx.send(":x: Номер товара должен быть целочисленным значением!")
+
+        msg = await ctx.send(":repeat: Выполняю...")
+
+        e = discord.Embed(colour=SECONDARY_COLOR)
+        user = ctx.author
+        guild = ctx.guild
+        member = guild.get_member(user.id)
+
+        roles = await get_roles_shop_list(guild.id)
+        user_balance = await Postgres.find_xp(ctx.guild.id, ctx.author.id)
+
+        for key, value in roles.items():
+            price = value['PRICE']
+
+            if int(user_balance) < int(price):
+                e.colour = ERROR_COLOR
+                e.description = ":x: Ошибка! У вас недостаточно средств."
+                return await msg.edit(embed=e, content="")
+
+            shop_id = value['SHOP_ID']
+
+            if itemId == shop_id:
+                role = guild.get_role(value['ROLE'])
+                new_balance = int(user_balance) - int(price)
+                try:
+                    await member.add_roles(role, reason="Покупка роли из магазина.")
+                    await Postgres.update_balance(guild.id, user.id, new_balance)
+                except:
+                    return await msg.edit(content=":x: Ошибочка вышла :(")
+
+                e.description = f"Вы успешно купили {role.mention}"
+                e.colour = role.colour
+
+                return await msg.edit(embed=e, content="")
 
 
 def setup(bot):

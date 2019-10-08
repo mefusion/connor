@@ -25,19 +25,13 @@ async def get_prefix(client, message):
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
-# Инициализация ютилек, требующих клиент бота
-Converters.init(bot)
-ModLogs.init(bot)
-Logger.init(bot)
-Shop.init(bot)
-
 
 @bot.event
 async def on_ready():
     # Инициализация БД
     await Postgres.initialize()
-    print(f'[CORE] The bot is ready for duty!')
-    await OldLog(log_data=':wave: Я уже работаю!').send(bot, Saber.MAIN_LOGS_CHANNEL)
+    # Информируется мэинтэйнер
+    await OldLog(log_data=':wave: Бот включен.').send(bot, Saber.MAIN_LOGS_CHANNEL)
     await bot.change_presence(activity=Saber.DEFAULT_STATUS)
     return print(f'[CORE] Logged in as {bot.user.name}#{bot.user.discriminator}')
 
@@ -68,6 +62,12 @@ async def on_guild_join(guild):
 
 
 if __name__ == '__main__':
+    # Инициализация ютилек, требующих клиент бота
+    Converters.init(bot)
+    ModLogs.init(bot)
+    Logger.init(bot)
+    Shop.init(bot)
+
     for extension in Saber.INITIAL_COGS:
         try:
             bot.load_extension(extension)
