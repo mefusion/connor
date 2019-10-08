@@ -5,6 +5,8 @@ from discord.ext.commands import BucketType
 from Saber.SaberCore import BOT_PREFIX
 from Saber.Utils.ShopGen import *
 from Saber.SaberCore import SECONDARY_COLOR, ERROR_COLOR
+from Saber.Utils.Configurator import what_prefix, get_shop_log_channel
+from Saber.Utils.Logger import Log
 
 
 class Shop(commands.Cog, name='Магазин'):
@@ -22,8 +24,20 @@ class Shop(commands.Cog, name='Магазин'):
     @commands.guild_only()
     @commands.cooldown(1, 15, BucketType.user)
     async def _shop_roles(self, ctx):
-        embed = await generate_roles_shop(ctx.guild.id)
-        return await ctx.send(embed=embed)
+        guild = ctx.guild
+        roles = await get_roles_shop_list(ctx.guild.id)
+        e = discord.Embed(color=SECONDARY_COLOR).set_footer(
+            text=f"Чтобы купить роль, используйте команду {await what_prefix(guild.id)}shop buy roles <номер_товара>")
+
+        for key, value in roles.items():
+            shop_id = value['SHOP_ID']
+            role = guild.get_role(value['ROLE'])
+            price = value['PRICE']
+
+            e.add_field(name=f"Товар #{shop_id}", value=f"Роль: {role.mention}\nЦена: {price}", inline=False)
+
+        del guild, roles
+        return await ctx.send(embed=e)
 
     @_shop.command(name="things", enabled=False)
     @commands.guild_only()
@@ -39,7 +53,7 @@ class Shop(commands.Cog, name='Магазин'):
             return await ctx.send(
                 f'Укажите категорию магазина (`roles` или `things`)')
 
-    # TODO: Нужно закончить, добавить проверку наличия предыдущей роли
+    # TODO: Добавить комментарии
     @_shop_buy.command(name="roles")
     @commands.guild_only()
     @commands.cooldown(1, 25, BucketType.user)
@@ -55,36 +69,71 @@ class Shop(commands.Cog, name='Магазин'):
         msg = await ctx.send(":repeat: Выполняю...")
 
         e = discord.Embed(colour=SECONDARY_COLOR)
-        user = ctx.author
         guild = ctx.guild
-        member = guild.get_member(user.id)
+        member = guild.get_member(ctx.author.id)
 
         roles = await get_roles_shop_list(guild.id)
-        user_balance = await Postgres.find_xp(ctx.guild.id, ctx.author.id)
+        user_balance = await Postgres.find_xp(guild.id, member.id)
+
+        if user_balance is None:
+            return await msg.edit(content=":x: Вас нет в базе данных опыта! У вас просто нет баланса!")
+
+        if itemId > len(roles) or itemId < 1:
+            return await msg.edit(
+                embed=discord.Embed(description=':x: Неизвестный код товара.', colour=ERROR_COLOR), content="")
 
         for key, value in roles.items():
             price = value['PRICE']
+            shop_id = value['SHOP_ID']
 
             if int(user_balance) < int(price):
                 e.colour = ERROR_COLOR
                 e.description = ":x: Ошибка! У вас недостаточно средств."
                 return await msg.edit(embed=e, content="")
 
-            shop_id = value['SHOP_ID']
-
             if itemId == shop_id:
                 role = guild.get_role(value['ROLE'])
+
+                if role in member.roles:
+                    e.colour = ERROR_COLOR
+                    e.description = ":x: У вас уже есть эта роль!"
+                    return await msg.edit(embed=e, content="")
+
+                for prev_key, prev_value in roles.items():
+                    prevRewardItemId = int(prev_value['SHOP_ID'])
+
+                    if itemId == 1 or itemId < 1:
+                        pass
+
+                    elif prevRewardItemId == (shop_id - 1):
+                        prev_role = guild.get_role(prev_value['ROLE'])
+
+                        if prev_role not in member.roles:
+                            e.description = f"Чтобы купить {role.mention}, необходимо иметь {prev_role.mention}"
+                            e.colour = role.colour
+                            return await msg.edit(content="", embed=e)
+
                 new_balance = int(user_balance) - int(price)
+
                 try:
                     await member.add_roles(role, reason="Покупка роли из магазина.")
-                    await Postgres.update_balance(guild.id, user.id, new_balance)
+                    await Postgres.update_balance(guild.id, member.id, new_balance)
                 except:
                     return await msg.edit(content=":x: Ошибочка вышла :(")
 
                 e.description = f"Вы успешно купили {role.mention}"
                 e.colour = role.colour
 
-                return await msg.edit(embed=e, content="")
+                await msg.edit(embed=e, content="")
+
+                # Логируем
+                log = Log(guild.id)
+                log_text = await log.generate_log_data(
+                    'xp',
+                    f"**{member}** (`{member.id}`) купил роль {role.mention} (`{role.id}`), потратив `{price}` единиц опыта."
+                )
+                await log.log_to(await get_shop_log_channel(guild.id), log_text)
+                del log, roles, guild, member
 
 
 def setup(bot):

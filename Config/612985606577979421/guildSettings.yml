@@ -9,6 +9,8 @@ LOGGING:
     CHANNEL: saber-mod-log
   XP_LOGS:
     CHANNEL: saber-xp-log
+  SHOPPING_LOGS:
+    CHANNEL: saber-shop-log
 
 WELCOMER:
   ENABLED: true

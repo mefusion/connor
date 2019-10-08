@@ -1,6 +1,9 @@
 import yaml
 import discord
 
+# На случай какой-то, не знаю какой
+BOT_PREFIX = "?"
+
 
 async def get_mod_log_channel(guild_id):
     try:
@@ -14,6 +17,14 @@ async def get_xp_log_channel(guild_id):
     try:
         with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
             return yaml.safe_load(__temp_conf__)['LOGGING']['XP_LOGS']['CHANNEL']
+    except Exception as err:
+        raise err
+
+
+async def get_shop_log_channel(guild_id):
+    try:
+        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+            return yaml.safe_load(__temp_conf__)['LOGGING']['SHOPPING_LOGS']['CHANNEL']
     except Exception as err:
         raise err
 
@@ -89,6 +100,9 @@ DEFAULT_CONFIG = {
         },
         "XP_LOGS": {
             "CHANNEL": "saber-xp-logs"
+        },
+        "SHOPPING_LOGS": {
+            "CHANNEL": "saber-shop-log"
         }
     },
 

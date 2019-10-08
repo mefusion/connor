@@ -114,7 +114,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
         new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
 
         await message.edit(
-            content=f'\N{OK HAND SIGN} Баланс {str(user)} успешно установлен на `{str(new_balance)}` единиц опыта.'
+            content=f'\N{OK HAND SIGN} Баланс **{str(user)}** успешно установлен на `{str(new_balance)}` единиц опыта.'
         )
 
         # Логируем
