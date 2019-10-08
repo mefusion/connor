@@ -59,7 +59,8 @@ class XPManagement(commands.Cog, name="Управление XP"):
         guildObj = self.bot.get_guild(guild_id)
 
         new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
-        await message.edit(content=f"\N{OK HAND SIGN} Баланс **{user}** успешно установлен на `{new_balance}` единиц опыта.")
+        await message.edit(
+            content=f"\N{OK HAND SIGN} Баланс **{user}** успешно установлен на `{new_balance}` единиц опыта.")
 
         # Логируем
         log = Log(guildObj.id)
@@ -276,11 +277,50 @@ class XPManagement(commands.Cog, name="Управление XP"):
         await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
         await message.edit(content=f"\N{OK HAND SIGN} **{user}** успешно удалён из базы данных сервера `{guild}`.")
 
-    # TODO
-    @_managexp.command(name='force_del_user', enabled=False)
+    @_managexp.command(name='force_del_user')
     @commands.is_owner()
-    async def _managexp_force_del_user(self, ctx):
-        await ctx.send("//TODO!")
+    async def _managexp_force_del_user(self, ctx, guild_id: int = None, user_id: int = None):
+        message = await ctx.send(':repeat: Выполняю...')
+
+        if guild_id in self.thisWords:
+            guild_id = ctx.guild.id
+        elif guild_id is None:
+            return await message.edit(content="Параметр `guild` обязателен.")
+        elif guild_id is None:
+            return await message.edit(content="Параметр `user` обязателен.")
+
+        # Проверяем, если пользователь вообще был указан
+        if user_id is None:
+            return await message.edit(content='Вы не указали пользователя.')
+
+        # Получаем текущий баланс пользователя, None - если нет в БД
+        user_object = await Postgres.find_xp(guild_id, user_id)
+
+        # Отмена операции, если указанный пользователь есть в БД
+        if user_object is None:
+            return await message.edit(content=f':x: Этого пользовател и так нет в базе данных.')
+
+        # Удаляем пользователя из базы данных
+        await Postgres.delete_from_db(guild_id, user_id)
+
+        # Логируем
+        guildObj = self.bot.get_guild(guild_id)
+
+        log = Log(guildObj.id)
+        log_text = await log.generate_log_data(
+            _type='admin',
+            text=f"**{ctx.author}** (`{ctx.author.id}`) удалил юзера **{user_id}** из базы данных."
+        )
+
+        await log.log_to((await get_xp_log_channel(guildObj.id)), log_text)
+        await message.edit(
+            content=f"\N{OK HAND SIGN} **{user_id}** успешно удалён из базы данных сервера `{guild_id}`.")
+
+    @_managexp_force_del_user.error
+    async def _managexp_force_del_user_handler(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            return await ctx.send(
+                ":x: Ошибка! При использовании этой команды вы должны указывать только целочисленные аргументы.")
 
 
 def setup(bot):

@@ -3,7 +3,10 @@ import asyncpg
 import yaml
 import time
 
+# Инициализация
+
 with open('./Config/master.yml', 'r', encoding='utf-8') as DB_CONF:
+    pool = None
     DB_CONF_DATA = yaml.safe_load(DB_CONF)['DATABASE_INFO']
     credentials = dict(
         user=str(DB_CONF_DATA['USER']),
@@ -11,8 +14,6 @@ with open('./Config/master.yml', 'r', encoding='utf-8') as DB_CONF:
         database=str(DB_CONF_DATA['DATABASE']),
         host=str(DB_CONF_DATA['HOST'])
     )
-
-pool = None
 
 
 async def initialize():
@@ -25,6 +26,8 @@ async def initialize():
 
     print("[POSTGRES] Database initialized!")
 
+
+# Основные методы утильки
 
 async def find_xp(guild_id, user_id):
     async with pool.acquire() as con:
