@@ -73,10 +73,6 @@ class Shop(commands.Cog, name='Магазин'):
         member = guild.get_member(ctx.author.id)
 
         roles = await get_roles_shop_list(guild.id)
-        user_balance = await Postgres.find_xp(guild.id, member.id)
-
-        if user_balance is None:
-            return await msg.edit(content=":x: Вас нет в базе данных опыта! У вас просто нет баланса!")
 
         if itemId > len(roles) or itemId < 1:
             return await msg.edit(
@@ -86,12 +82,17 @@ class Shop(commands.Cog, name='Магазин'):
             price = value['PRICE']
             shop_id = value['SHOP_ID']
 
-            if int(user_balance) < int(price):
-                e.colour = ERROR_COLOR
-                e.description = ":x: Ошибка! У вас недостаточно средств."
-                return await msg.edit(embed=e, content="")
-
             if itemId == shop_id:
+                user_balance = await Postgres.find_xp(guild.id, member.id)
+
+                if user_balance is None:
+                    return await msg.edit(content=":x: Вас нет в базе данных опыта! У вас просто нет баланса!")
+
+                if int(user_balance) < int(price):
+                    e.colour = ERROR_COLOR
+                    e.description = ":x: Ошибка! У вас недостаточно средств."
+                    return await msg.edit(embed=e, content="")
+
                 role = guild.get_role(value['ROLE'])
 
                 if role in member.roles:
@@ -121,10 +122,8 @@ class Shop(commands.Cog, name='Магазин'):
                 except:
                     return await msg.edit(content=":x: Ошибочка вышла :(")
 
-                e.description = f"Вы успешно купили {role.mention}"
-                e.colour = role.colour
-
-                await msg.edit(embed=e, content="")
+                await msg.edit(embed=discord.Embed(colour=role.colour, description=f"Вы успешно купили {role.mention}"),
+                               content="")
 
                 # Логируем
                 log = Log(guild.id)
