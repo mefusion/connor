@@ -17,7 +17,7 @@ import sys
 
 async def get_prefix(client, message):
     try:
-        with open(f'./Config/{message.guild.id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
+        with open(f'./Config/Guilds/{message.guild.id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
             prefixes = yaml.safe_load(prefixes_cfg)
             return commands.when_mentioned_or(*prefixes['PREFIX'])(client, message)
     except Exception as error:
@@ -56,12 +56,12 @@ async def on_resumed():
 
 @bot.event
 async def on_guild_join(guild):
-    if not os.path.exists(os.path.dirname(f'./Config/{guild.id}/guildSettings.yml')):
+    if not os.path.exists(os.path.dirname(f'./Config/Guilds/{guild.id}/guildSettings.yml')):
         try:
             print("[CORE] New guild, creating guildSetting.yml file...")
-            os.makedirs(os.path.dirname(f'./Config/{guild.id}/guildSettings.yml'))
+            os.makedirs(os.path.dirname(f'./Config/Guilds/{guild.id}/guildSettings.yml'))
 
-            with open(f'./Config/{guild.id}/guildSettings.yml', 'w+', encoding='utf-8') as guildSettingsFile:
+            with open(f'./Config/Guilds/{guild.id}/guildSettings.yml', 'w+', encoding='utf-8') as guildSettingsFile:
                 yaml.dump(Saber.DEFAULT_CONFIG, guildSettingsFile)
 
             print("[CORE] guildSettings.yml file was created!")

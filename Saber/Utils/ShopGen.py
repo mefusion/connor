@@ -11,7 +11,7 @@ def init(bot):
 
 async def get_roles_shop_list(guild_id):
     try:
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp__:
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp__:
             # Загрузка данных из файла конфигурации
             shop = yaml.safe_load(__temp__)
             # Выгружаем

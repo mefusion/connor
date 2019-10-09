@@ -7,7 +7,7 @@ BOT_PREFIX = "?"
 
 async def get_mod_log_channel(guild_id):
     try:
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
             return yaml.safe_load(__temp_conf__)['LOGGING']['MOD_LOGS']['CHANNEL']
     except Exception as err:
         raise err
@@ -15,7 +15,7 @@ async def get_mod_log_channel(guild_id):
 
 async def get_xp_log_channel(guild_id):
     try:
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
             return yaml.safe_load(__temp_conf__)['LOGGING']['XP_LOGS']['CHANNEL']
     except Exception as err:
         raise err
@@ -23,7 +23,7 @@ async def get_xp_log_channel(guild_id):
 
 async def get_shop_log_channel(guild_id):
     try:
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
             return yaml.safe_load(__temp_conf__)['LOGGING']['SHOPPING_LOGS']['CHANNEL']
     except Exception as err:
         raise err
@@ -31,7 +31,7 @@ async def get_shop_log_channel(guild_id):
 
 async def show_config(guild_id):
     try:
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as __temp_conf__:
             settings = yaml.safe_load(__temp_conf__)
             settings_temp = ""
 
@@ -46,19 +46,19 @@ async def show_config(guild_id):
         raise err
 
 
-async def get_whitelist():
+async def what_prefix(guild_id):
     try:
-        with open('./Config/master.yml', 'r', encoding='utf-8') as __temp_master__:
-            return tuple(yaml.safe_load(__temp_master__)['WHITELIST'])
+        # Подключение файла конфигурации префиксов
+        with open(f'./Config/Guilds/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
+            return yaml.safe_load(prefixes_cfg)['PREFIX']
     except Exception as err:
         raise err
 
 
-async def what_prefix(guild_id):
+async def get_whitelist():
     try:
-        # Подключение файла конфигурации префиксов
-        with open(f'./Config/{guild_id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
-            return yaml.safe_load(prefixes_cfg)['PREFIX']
+        with open('./Config/master.yml', 'r', encoding='utf-8') as __temp_master__:
+            return tuple(yaml.safe_load(__temp_master__)['WHITELIST'])
     except Exception as err:
         raise err
 
