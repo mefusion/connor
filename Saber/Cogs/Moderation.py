@@ -10,6 +10,13 @@ class Moderation(commands.Cog, name='Модерация'):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(name="warn")
+    @commands.has_permissions(manage_messages=True)
+    async def warn(self, ctx, target: discord.Member = None, *, reason: str = None):
+        """Выдаёт варны"""
+        # TODO: Варны, требуется поиск инфракций!
+        pass
+
     @commands.command(name="ban")
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)

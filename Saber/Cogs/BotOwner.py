@@ -225,7 +225,7 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
     @_cog.command(name='load')
     async def _cog_load(self, ctx, *, cog: str):
         if not cog == "jishaku":
-            cog = f'Twig.Cogs.{cog}'
+            cog = f'Saber.Cogs.{cog}'
         try:
             self.bot.load_extension(cog)
         except Exception as e:

@@ -30,6 +30,7 @@ INITIAL_COGS: # Модули, загружаемые при запуске бо�
   - 'Saber.Cogs.Fun'
   - 'Saber.Cogs.XPManagement'
   - 'Saber.Cogs.Moderation'
+  - 'Saber.Cogs.InfractionsManager'
 
 IGNORED_CHANNELS: # Названия каналов, которые будут игнорироваться при получении опыта
   - 'commands'

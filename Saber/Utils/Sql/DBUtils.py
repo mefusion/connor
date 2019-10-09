@@ -53,8 +53,11 @@ class Infractions:
         pass  # TODO: Infractions search
 
     @staticmethod
-    async def get():
-        pass  # TODO: Get infraction info
+    async def get(infraction_id):
+        async with pool.acquire() as con:
+            infraction_data = await con.fetchrow(f"SELECT * FROM public.infractions WHERE inf_id={str(infraction_id)}")
+
+        return infraction_data
 
     @staticmethod
     async def update_reason():

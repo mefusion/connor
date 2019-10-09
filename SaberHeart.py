@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 import Saber.SaberCore as Saber
@@ -30,6 +31,16 @@ bot = commands.AutoShardedBot(command_prefix=get_prefix)
 async def on_ready():
     # Инициализация БД
     await DBConnector.initialize()
+
+    # Загружаются коги
+    for extension in Saber.INITIAL_COGS:
+        try:
+            bot.load_extension(extension)
+            print(f'[COGS] Cog {extension} has been loaded!')
+        except Exception as e:
+            print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
+            traceback.print_exc()
+
     # Информируется мэинтэйнер
     await OldLog(log_data=':wave: Бот включен.').send(bot, Saber.MAIN_LOGS_CHANNEL)
     await bot.change_presence(activity=Saber.DEFAULT_STATUS)
@@ -67,13 +78,5 @@ if __name__ == '__main__':
     ModLogs.init(bot)
     Logger.init(bot)
     Shop.init(bot)
-
-    for extension in Saber.INITIAL_COGS:
-        try:
-            bot.load_extension(extension)
-            print(f'[CORE] Cog {extension} has been loaded!')
-        except Exception as e:
-            print(f'Failed to load extension {extension} because {e}', file=sys.stderr)
-            traceback.print_exc()
 
 Saber.authorize(bot)
