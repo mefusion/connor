@@ -1,5 +1,5 @@
 import discord
-import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+from Saber.Utils.Sql.DBUtils import Exp
 from discord.ext import commands
 from discord.ext.commands import BucketType
 from Saber.SaberCore import BOT_PREFIX
@@ -83,7 +83,7 @@ class Shop(commands.Cog, name='Магазин'):
             shop_id = value['SHOP_ID']
 
             if itemId == shop_id:
-                user_balance = await Postgres.find_xp(guild.id, member.id)
+                user_balance = await Exp.find_xp(guild.id, member.id)
 
                 if user_balance is None:
                     return await msg.edit(content=":x: Вас нет в базе данных опыта! У вас просто нет баланса!")
@@ -118,7 +118,7 @@ class Shop(commands.Cog, name='Магазин'):
 
                 try:
                     await member.add_roles(role, reason="Покупка роли из магазина.")
-                    await Postgres.update_balance(guild.id, member.id, new_balance)
+                    await Exp.update_balance(guild.id, member.id, new_balance)
                 except:
                     return await msg.edit(content=":x: Ошибочка вышла :(")
 

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import Saber.SaberCore as Saber
 from Saber.Utils.Logger import OldLog
-import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+import Saber.Utils.Sql.DBConnector as DBConnector
 import Saber.Utils.ModLogs as ModLogs
 import Saber.Utils.Logger as Logger
 import errno
@@ -29,7 +29,7 @@ bot = commands.AutoShardedBot(command_prefix=get_prefix)
 @bot.event
 async def on_ready():
     # Инициализация БД
-    await Postgres.initialize()
+    await DBConnector.initialize()
     # Информируется мэинтэйнер
     await OldLog(log_data=':wave: Бот включен.').send(bot, Saber.MAIN_LOGS_CHANNEL)
     await bot.change_presence(activity=Saber.DEFAULT_STATUS)

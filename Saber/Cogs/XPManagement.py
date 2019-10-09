@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from Saber.Utils.Logger import Log
-import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+from Saber.Utils.Sql.DBUtils import Exp
 from ..Utils.Configurator import *
 
 
@@ -43,7 +43,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс юзера
-        balance = await Postgres.find_xp(guild_id, user.id)
+        balance = await Exp.find_xp(guild_id, user.id)
 
         if balance is None:
             return await message.edit(content=f':x: Этого пользователя нет в базе данных, изменить баланс невозможно.')
@@ -54,11 +54,11 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content=f':x: Вы пытаетесь добавить слишком много опыта, ' +
                                               'баланс пользователя не должен превышать 350 тыс. опыта.')
 
-        await Postgres.update_balance(guild_id, user.id, updated_balance)
+        await Exp.update_balance(guild_id, user.id, updated_balance)
 
         guildObj = self.bot.get_guild(guild_id)
 
-        new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
+        new_balance = await Exp.find_xp(ctx.guild.id, user.id)
         await message.edit(
             content=f"\N{OK HAND SIGN} Баланс **{user}** успешно установлен на `{new_balance}` единиц опыта.")
 
@@ -91,7 +91,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс юзера
-        balance = await Postgres.find_xp(guild_id, user.id)
+        balance = await Exp.find_xp(guild_id, user.id)
 
         # Отмена операции, если указаноого пользователя нет в БД
         if balance is None:
@@ -109,9 +109,9 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content=f':x: Вы пытаетесь дать больше 350 тыс. очков опыта, так нельзя.')
 
         # Применяем изменения, если проверки пройдены успешно
-        await Postgres.update_balance(guild_id, user.id, set_xp_to)
+        await Exp.update_balance(guild_id, user.id, set_xp_to)
         guildObj = self.bot.get_guild(guild_id)
-        new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
+        new_balance = await Exp.find_xp(ctx.guild.id, user.id)
 
         await message.edit(
             content=f'\N{OK HAND SIGN} Баланс **{str(user)}** успешно установлен на `{str(new_balance)}` единиц опыта.'
@@ -148,7 +148,7 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        current_xp = await Postgres.find_xp(guild, user.id)
+        current_xp = await Exp.find_xp(guild, user.id)
 
         # Отмена операции, если указаноого пользователя нет в БД
         if current_xp is None:
@@ -163,9 +163,9 @@ class XPManagement(commands.Cog, name="Управление XP"):
         set_xp_to = 0
 
         # Применяем изменения, если проверки пройдены успешно
-        await Postgres.update_balance(guild, user.id, set_xp_to)
+        await Exp.update_balance(guild, user.id, set_xp_to)
         guildObj = self.bot.get_guild(guild)
-        new_balance = await Postgres.find_xp(ctx.guild.id, user.id)
+        new_balance = await Exp.find_xp(ctx.guild.id, user.id)
 
         if new_balance >= 0:
             await message.edit(
@@ -210,14 +210,14 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await Postgres.find_xp(guild, user.id)
+        user_object = await Exp.find_xp(guild, user.id)
 
         # Отмена операции, если указанный пользователь есть в БД
         if user_object is not None:
             return await message.edit(content=f':x: Этот пользователь уже существует в базе данных.')
 
         # Добавляем пользователя в базу
-        await Postgres.insert_into_db(guild, user.id, 0)
+        await Exp.insert_into_db(guild, user.id, 0)
         await message.edit(content=f"\N{OK HAND SIGN} **{user}** успешно внесён в базу данных сервера `{guild}`.")
 
         # Логируем
@@ -256,14 +256,14 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Нет. Машинам нельзя сюда.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await Postgres.find_xp(guild, user.id)
+        user_object = await Exp.find_xp(guild, user.id)
 
         # Отмена операции, если указанный пользователь есть в БД
         if user_object is None:
             return await message.edit(content=f':x: Этого пользовател и так нет в базе данных.')
 
         # Удаляем пользователя из базы данных
-        await Postgres.delete_from_db(guild, user.id)
+        await Exp.delete_from_db(guild, user.id)
 
         # Логируем
         guildObj = self.bot.get_guild(guild)
@@ -294,14 +294,14 @@ class XPManagement(commands.Cog, name="Управление XP"):
             return await message.edit(content='Вы не указали пользователя.')
 
         # Получаем текущий баланс пользователя, None - если нет в БД
-        user_object = await Postgres.find_xp(guild_id, user_id)
+        user_object = await Exp.find_xp(guild_id, user_id)
 
         # Отмена операции, если указанный пользователь есть в БД
         if user_object is None:
             return await message.edit(content=f':x: Этого пользовател и так нет в базе данных.')
 
         # Удаляем пользователя из базы данных
-        await Postgres.delete_from_db(guild_id, user_id)
+        await Exp.delete_from_db(guild_id, user_id)
 
         # Логируем
         guildObj = self.bot.get_guild(guild_id)

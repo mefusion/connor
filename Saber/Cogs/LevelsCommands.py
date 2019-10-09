@@ -1,7 +1,7 @@
 from Saber.SaberCore import *
 import discord
 from discord.ext import commands
-import Saber.Utils.Sql.Functions.PostgresFunctions as Postgres
+from ..Utils.Sql.DBUtils import Exp
 from ..Utils.Converters import DiscordUser
 
 
@@ -14,7 +14,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
     @commands.cooldown(1, 20, type=BucketType.user)
     async def _leaders(self, ctx):
         msg = await ctx.send("Открываю секретную книжку с записями...")
-        data = await Postgres.find_top_5(ctx.guild.id)
+        data = await Exp.find_top_5(ctx.guild.id)
 
         embed = discord.Embed(colour=SECONDARY_COLOR, title=f'ТОП-{len(data)} ЛИДЕРОВ')
 
@@ -44,7 +44,7 @@ class LevelsCommands(commands.Cog, name='Опыт'):
         if user.bot is True:
             return await ctx.send('Нет. Машинам нельзя иметь уровень.')
 
-        current_xp = await Postgres.find_xp(ctx.guild.id, user.id)
+        current_xp = await Exp.find_xp(ctx.guild.id, user.id)
 
         if current_xp is None:
             return await ctx.send(embed=discord.Embed(
