@@ -21,13 +21,13 @@ class EventsLevels(commands.Cog, name='Уровни'):
 
         if guild is None:
             return
-        if msg.content.startswith(await what_prefix(msg.guild.id)) or msg.content.startswith(self.bot.user.mention):
-            return
         if member.id == self.bot.user.id:
             return
         if member.bot:
             return
         if msg.channel.name in IGNORED_CHANNELS:
+            return
+        if msg.content.startswith(await what_prefix(msg.guild.id)) or msg.content.startswith(self.bot.user.mention):
             return
 
         # Подготавливаем эмбед сообщение
