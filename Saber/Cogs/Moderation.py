@@ -3,6 +3,7 @@ from discord.ext import commands
 from ..Utils.Converters import DiscordUser
 from ..Utils.ModLogs import ModLog
 from ..Utils.Configurator import get_mod_log_channel
+from ..Utils.Sql.DBUtils import Infractions
 
 
 class Moderation(commands.Cog, name='Модерация'):
@@ -12,7 +13,7 @@ class Moderation(commands.Cog, name='Модерация'):
     @commands.command(name="ban")
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, target: discord.Member = None, *, reason: commands.clean_content = None):
+    async def ban(self, ctx, target: discord.Member = None, *, reason: str = None):
         """Выдаёт баны"""
         if target is None:
             return await ctx.send("Вы должны указать участника сервера.")
@@ -20,6 +21,7 @@ class Moderation(commands.Cog, name='Модерация'):
             reason = "Причина не указана."
 
         await target.ban(reason=f"[Модератор {ctx.author.id}]: {reason}")
+        await Infractions.create("ban", ctx.guild.id, target.id, ctx.author.id, reason)
         await ctx.send(f":ok_hand: {target} забанен: `{reason}`")
 
         message = await ModLog(ctx.guild).generate_message(
@@ -39,6 +41,7 @@ class Moderation(commands.Cog, name='Модерация'):
             reason = "Причина не указана."
 
         await ctx.guild.ban(discord.Object(id=target), reason=f"[Модератор {ctx.author.id}]: {reason}")
+        await Infractions.create("forced-ban", ctx.guild.id, target, ctx.author.id, reason)
         await ctx.send(f":ok_hand: {target} забанен: `{reason}`")
 
         message = await ModLog(ctx.guild).generate_message(
@@ -58,6 +61,7 @@ class Moderation(commands.Cog, name='Модерация'):
             reason = "Причина не указана."
 
         await target.kick(reason=f"[Модератор {ctx.author.id}]: {reason}")
+        await Infractions.create("kick", ctx.guild.id, target.id, ctx.author.id, reason)
         await ctx.send(f":ok_hand: {target} кикнут: `{reason}`")
 
         message = await ModLog(ctx.guild).generate_message(

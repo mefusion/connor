@@ -1,7 +1,6 @@
 import asyncio
 import asyncpg
 import yaml
-import time
 import Saber.Utils.Sql.DBUtils as DBUtils
 
 pool = None
