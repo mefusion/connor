@@ -74,7 +74,7 @@ class BotOwner(commands.Cog, name='Владелец бота', command_attrs=dic
 
     @commands.command(name="pullv2", aliases=("update", "pull"))
     async def pullv2(self, ctx):
-        pull = subprocess.Popen(['git', 'pull', 'origin', 'master'],
+        pull = subprocess.Popen(['git', 'pull', 'origin'],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
         stdout, stderr = pull.communicate()
