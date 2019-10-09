@@ -44,7 +44,7 @@ class EventsLevels(commands.Cog, name='Уровни'):
         user = await Exp.find_xp(msg.guild.id, member.id)
 
         if user is None:
-            await Exp.insert_into_db(msg.guild.id, member.id, 0)
+            await Exp.insert_into_db(msg.guild.id, member.id, 0, int(time.time()))
             temp_embed.set_author(name=f":new: {msg.author} ({msg.author.id})", icon_url=msg.author.avatar_url)
 
         triggered_at = int(time.time())

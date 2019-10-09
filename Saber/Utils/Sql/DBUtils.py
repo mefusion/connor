@@ -128,14 +128,13 @@ class Exp:
     @staticmethod
     async def insert_into_db(guild_id, user_id, balance, timestamp=None):
         async with pool.acquire() as con:
-            triggered_at = int(time.time())
-
             if timestamp is None:
+                triggered_at = int(time.time())
                 await con.execute(
                     f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({str(guild_id)}, {str(user_id)}, {str(balance)}, {triggered_at - 500});")
             else:
                 await con.execute(
-                    f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({str(guild_id)}, {str(user_id)}, {str(balance)}, {triggered_at});")
+                    f"INSERT INTO public.xp (guild_id, user_id, balance, last_time_edited) VALUES({str(guild_id)}, {str(user_id)}, {str(balance)}, {timestamp});")
 
     @staticmethod
     async def delete_from_db(guild_id, user_id):
