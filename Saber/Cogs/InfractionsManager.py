@@ -15,13 +15,12 @@ class InfractionsManager(commands.Cog, name='Инфракции'):
         if ctx.invoked_subcommand is None:
             return await ctx.send('Вы не указали субкоманду.')
 
+    # TODO: Читабельный вывод данных
     @inf.command(name="search")
     @commands.has_permissions(manage_messages=True, read_message_history=True)
     async def inf_search(self, ctx, user: DiscordUser):
         user = await self.bot.fetch_user(user.id)
         data = await Infractions.search(ctx.guild.id, user.id)
-
-        data = data
 
         await ctx.send(f"{str(data)}")
 
