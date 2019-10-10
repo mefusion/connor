@@ -53,7 +53,6 @@ class Shop(commands.Cog, name='Магазин'):
             return await ctx.send(
                 f'Укажите категорию магазина (`roles` или `things`)')
 
-    # TODO: Добавить комментарии
     @_shop_buy.command(name="roles")
     @commands.guild_only()
     @commands.cooldown(1, 25, BucketType.user)

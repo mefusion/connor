@@ -4,7 +4,6 @@ from discord.ext import commands
 import Saber.SaberCore as Saber
 from Saber.Utils.Logger import OldLog
 import Saber.Utils.Sql.DBConnector as DBConnector
-import Saber.Utils.ModLogs as ModLogs
 import Saber.Utils.Logger as Logger
 import errno
 import Saber.Utils.Converters as Converters
@@ -75,7 +74,6 @@ async def on_guild_join(guild):
 if __name__ == '__main__':
     # Инициализация ютилек, требующих клиент бота
     Converters.init(bot)
-    ModLogs.init(bot)
     Logger.init(bot)
     Shop.init(bot)
 

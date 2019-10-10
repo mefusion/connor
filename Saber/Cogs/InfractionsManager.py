@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from ..Utils.Converters import DiscordUser
-from ..Utils.ModLogs import ModLog
+from ..Utils.Logger import ModLog
 from ..Utils.Configurator import get_mod_log_channel
 from ..Utils.Sql.DBUtils import Infractions
 
