@@ -49,8 +49,19 @@ class Infractions:
                 f"DELETE FROM public.infractions WHERE inf_id={str(inf_id)}")
 
     @staticmethod
-    async def search():
-        pass  # TODO: Infractions search
+    async def search(guild_id, user_id=None, moderator_id=None, inf_id=None):
+        async with pool.acquire() as con:
+            if user_id is not None:
+                if inf_id is not None:
+                    return await con.fetch(
+                        f"SELECT * FROM public.infractions WHERE user_id={str(user_id)} AND guild_id={str(guild_id)}")
+
+                elif moderator_id is not None:
+                    return await con.fetch(
+                        f"SELECT * FROM public.infractions WHERE user_id={str(user_id)} AND guild_id={str(guild_id)} AND moderator_id={str(moderator_id)}")
+
+            return await con.fetch(
+                f"SELECT * FROM public.infractions WHERE user_id={str(user_id)} AND guild_id={str(guild_id)}")
 
     @staticmethod
     async def get(infraction_id):
