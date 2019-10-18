@@ -18,7 +18,7 @@ async def get_prefix(client, message):
     try:
         with open(f'./Config/Guilds/{message.guild.id}/guildSettings.yml', 'r', encoding='utf-8') as prefixes_cfg:
             prefixes = yaml.safe_load(prefixes_cfg)
-            return commands.when_mentioned_or(*prefixes['PREFIX'])(client, message)
+            return commands.when_mentioned_or(prefixes['PREFIX'])(client, message)
     except Exception as error:
         raise error
 
