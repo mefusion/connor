@@ -130,6 +130,10 @@ class ModLog:
             return f"[`{punished_at}`] " \
                    f"Модератор **{initiator}** (`{initiator.id}`) очистил `{additional}` сообщений " \
                    f"в канале #{channel}"
+        elif action == 'warn':
+            return f"[`{punished_at}`] " \
+                   f"Модератор **{initiator}** (`{initiator.id}`) выдал предупреждение **{punished}** (`{punished.id}`): " \
+                   f"`{reason}`"
         elif action == 'clear':
             return f"[`{punished_at}`] " \
                    f"Модератор **{initiator}** (`{initiator.id}`) очистил `{additional}` сообщений " \

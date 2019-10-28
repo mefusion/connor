@@ -15,7 +15,19 @@ class Moderation(commands.Cog, name='Модерация'):
     async def warn(self, ctx, target: discord.Member = None, *, reason: str = None):
         """Выдаёт варны"""
         # TODO: Варны, требуется поиск инфракций!
-        pass
+        if target is None:
+            return await ctx.send("Вы должны указать участника сервера.")
+        elif reason is None:
+            reason = "Причина не указана."
+
+        await Infractions.create("warn", ctx.guild.id, target.id, ctx.author.id, reason)
+        await ctx.send(f":ok_hand: {target} получает предупреждение: `{reason}`")
+
+        message = await ModLog(ctx.guild).generate_message(
+            initiator=ctx.author.id, punished=target.id,
+            reason=reason, action='warn'
+        )
+        await ModLog(ctx.guild).inform(await get_mod_log_channel(ctx.guild.id), message)
 
     @commands.command(name="ban")
     @commands.bot_has_permissions(ban_members=True)
