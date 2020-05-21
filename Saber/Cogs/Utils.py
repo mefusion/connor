@@ -71,7 +71,7 @@ class Utils(commands.Cog, name='Разное'):
                 commit_msg = commit_msg[:120] + "..."
             last_changes += ("[`{0}`]({1}) {2} \n".format(
                 commit.hexsha[:7],
-                f"https://github.com/runic-tears/saber/commit/{commit.hexsha}",
+                f"https://github.com/mefusion/connor/commit/{commit.hexsha}",
                 commit_msg
             ))
 
@@ -79,9 +79,9 @@ class Utils(commands.Cog, name='Разное'):
         embed.add_field(name='Последние изменения', value=last_changes, inline=False)
         embed.add_field(name='Время работы', value=f'`{uptime}`')
         embed.add_field(name='Аккаунт создан в', value=self.bot.user.created_at.strftime("%d.%m.%Y %H:%M:%S (UTC)"))
-        embed.add_field(name='GitHub', value=f'[Перейти по ссылке](https://github.com/runic-tears/saber)')
-        embed.add_field(name='Python', value=f'<:Python:624536559777087490> `{sys.version[:5]}`')
-        embed.add_field(name='discord.py', value=f'<:Dpy:624536687959080962> ` {discord.__version__}`')
+        embed.add_field(name='GitHub', value=f'[Перейти по ссылке](https://github.com/mefusion/connor)')
+        embed.add_field(name='Python', value=f'<:Python:645196427617632287> `{sys.version[:5]}`')
+        embed.add_field(name='discord.py', value=f'<:Dpy:645196428137725952> ` {discord.__version__}`')
         embed.add_field(name='Версия', value=f'`{short_sha}`')
         embed.set_author(name=f'{self.bot.user}', icon_url=self.bot.user.avatar_url)
         embed.timestamp = datetime.datetime.utcnow()

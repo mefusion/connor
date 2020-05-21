@@ -1,0 +1,12 @@
+PREFIX: '>'
+
+WELCOMER:
+  CHANNEL: 0
+  ENABLED: false
+  MESSAGE_LIVES: 20
+
+LOGGING:
+  MESSAGE_LOGS:
+    CHANNEL: connor-logs
+  MOD_LOGS:
+    CHANNEL: connor-logs
